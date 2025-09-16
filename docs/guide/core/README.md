@@ -1,103 +1,44 @@
-# Loading 模块——从索引加载 DICOM 序列（UWP/HL2 友好）
+---
+title: Core 模块 · 总览
+---
 
-> 本页目标：完成从本地资源文件夹加载一套 DICOM 序列到场景，拿到体素信息，并触发进度/完成/失败事件。
+# Core 模块概述
 
-## 本章完成后你将会
+Core 模块是整个 **HoloLens2Medical** 项目的基础层，它定义了对医学影像数据的表示方式，并提供了理解 DICOM 数据、管理切片、坐标映射和纹理生成的核心算法。其它模块(加载、成像、界面、可视化等)均以 Core 提供的数据结构和工具为出发点。因此，理解 Core 的设计对于后续功能的扩展和维护至关重要。
 
-* 在场景中添加并配置 **DicomSeriesLoader** 组件
-* 使用按钮一键触发加载流程 `StartLoading()` / `StopLoading()`
-* 订阅 `OnLoadingStatusChanged` / `OnLoadingComplete` / `OnLoadingFailed`
-* 了解 `StreamingAssets` 与 **绝对路径** 两种读法的差异
+## 主要职责
 
-## 前置条件
+Core 模块围绕几个关键类展开：
 
-* Unity（建议 2021 LTS+）
-* MRTK3 已导入
-* 目标平台：UWP（HoloLens 2）或 PC Standalone
-* 资源放置：
+- **DicomMetadata**：存储体积的几何信息与显示默认值，包括体素网格尺寸(`Dimensions`)、体素间距(`Spacing`)、原点坐标(`Origin`)、方向四元数(`Orientation`)以及默认窗位和窗宽。该类只是一个数据容器，没有复杂逻辑，但它为解析像素数据提供了统一的几何参照。
+- **DicomSlice**：代表一张 DICOM 图像切片，负责从数据集提取元数据和像素数据，支持按需解码 `PixelData`、缓存窗位/窗宽设置，并创建 Unity `Texture2D`。切片还实现了 `IDisposable`，释放纹理和像素数据以节省内存。
+- **DicomSliceManager**：维护一个切片列表，并提供添加、排序、索引访问和资源释放的操作。它抽象了切片集合的生命周期，使得 `DicomSeries` 更专注于序列级的逻辑。
+- **DicomCoordinateMapper**：通过解析 DICOM 标签 `ImageOrientationPatient` 中的行、列方向向量，推断轴向(Axial)、矢状(Sagittal)和冠状(Coronal)三个解剖平面与体素坐标轴的对应关系，并提供在一维索引、三维体素坐标和二维平面像素坐标之间转换的方法。
+- **DicomPlane**：一个简单的枚举，定义了三种解剖平面类型以及常用的工具函数。
 
-  * 推荐：`Assets/StreamingAssets/DICOM/YourSeries/` 目录下放置若干 `.dcm`
-  * 可选：同级放置 `dicom_index.json`（未提供也没关系，会自动扫描生成）
+## 与其他模块的关系
 
-> **提示**
-> 序列越完整、文件命名越规范，自动索引和排序越稳定。建议使用 4 位或 5 位递增序号命名切片：`0001.dcm, 0002.dcm, ...`。
+- **加载模块** 依赖 Core 提供的 `DicomSlice` 和 `DicomSliceManager` 来组织切片，利用 `DicomMetadata` 存储读取到的几何信息，并在完成加载后调用 `SortSlices()` 保证切片顺序。
+- **成像模块**(Imaging)在解析像素数据或应用窗位窗宽时直接使用 `DicomSlice` 中的解码和纹理创建函数。
+- **界面模块**(UI)和 **视图模块**(Viewers)通过 `DicomCoordinateMapper` 将用户操作(如滑条位置或鼠标点击)映射为体素索引，进而查询或显示对应的切片。
+- **三维可视化模块**(Visualization3D)可能利用 `DicomMetadata` 提供的间距和方向信息在世界坐标系中放置体数据，并通过切片类生成体绘制所需的纹理。
 
-## 场景搭建
+## 文档结构
 
-1. 在层级面板中创建空物体 `DICOM_Loader`
-2. 添加组件 **DicomSeriesLoader**（命名空间：`MedicalMR.DICOM.Loading`）
-3. 在 Inspector 设置：
+本目录下的文档按「原理说明」和「最小实现」分为两个模块：
 
-   * **Dicom Folder Path**：例如 `DICOM/YourSeries/`（相对 `StreamingAssets`）
-   * **Use Absolute Path**：默认关闭；若勾选，输入绝对路径（见 How‑to 篇）
-   * **Verbose Logging**：可选，打印更详细的加载日志
-4. 新建脚本 `DicomLoadDemo.cs`，挂在同一物体上，并绑定一个 UI Button 的 OnClick → `DoLoad()`
+### Explanations 设计原理与实现思路
 
-```csharp
-using UnityEngine;
-using MedicalMR.DICOM.Loading;
+  * [元数据与几何属性解析](./explanations/01_volume_properties.html)
+  * [切片集合管理原理](./explanations/02_slice_management.html)
+  * [坐标系与方向映射](./explanations/03_orientation_mapping.html)
+  * [像素数据解码与纹理生成](./explanations/04_slice_data_and_texture.html)
 
-public class DicomLoadDemo : MonoBehaviour
-{
-    public DicomSeriesLoader loader;
+### How-To 按功能划分的最小实现示例
 
-    void Awake()
-    {
-        // 进度 & 状态
-        loader.OnLoadingStatusChanged.AddListener((p, s) =>
-            Debug.Log($"[Loading] {p:P0} - {s}"));
+  * [设置体积属性](./how-to/01_set_volume_properties.html)
+  * [切片的添加、排序与释放](./how-to/02_manage_slices.html)
+  * [坐标映射实例](./how-to/03_coordinate_mapping_examples.html)
+  * [从切片生成纹理并显示](./how-to/04_create_texture_from_slice.html)
 
-        // 成功
-        loader.OnLoadingComplete.AddListener((seriesObj, dims, spacing, origin) =>
-        {
-            Debug.Log($"[Completed] dims={dims} spacing={spacing} origin={origin}");
-            // TODO: 将结果传给你的 Viewer / UI 层
-        });
-
-        // 失败
-        loader.OnLoadingFailed.AddListener(err => Debug.LogError($"[Failed] {err}"));
-    }
-
-    public void DoLoad()  => loader.StartLoading();
-    public void Cancel()  => loader.StopLoading();
-}
-```
-
-> **验证**
-> 运行后点击按钮，应看到 Console 持续打印进度，最终出现“Completed”日志；若路径错误或索引为空，会收到“Failed”日志。
-
-## 索引文件（可选）
-
-若手动提供 `dicom_index.json`，推荐结构如下：
-
-```json
-{
-  "slices": [
-    { "path": "DICOM/YourSeries/0001.dcm" },
-    { "path": "DICOM/YourSeries/0002.dcm" }
-  ]
-}
-```
-
-> **说明**
-> 未提供索引时，加载器会在目标目录中扫描 `.dcm` 文件并生成同结构的索引后再加载。索引减少 UWP 文件系统限制带来的不确定性，也能避免错读其它格式。
-
-## 常见目录结构
-
-```
-Assets/
-  StreamingAssets/
-    DICOM/
-      YourSeries/
-        0001.dcm
-        0002.dcm
-        ...
-        dicom_index.json   # 可选
-```
-
-## 下一步
-
-* [绑定进度条与状态文本](./how-to/bind-progress.html)
-* [改为绝对路径加载（PC/HL2）](./how-to/load-from-absolute-path.html)
-* [理解：完整加载流水线与数据结构](./explanations/flow.html)
-* [故障排除：路径、JSON、黑屏等](./troubleshooting/common-issues.html)
+建议首先阅读 **explanations** 下的原理文档，理解各类之间如何协作；然后在 **how‑to** 文件夹中查找对应的使用示例，并在 Unity 中实际运行验证。

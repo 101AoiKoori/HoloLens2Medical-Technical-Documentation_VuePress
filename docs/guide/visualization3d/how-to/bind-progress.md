@@ -1,10 +1,10 @@
 # 绑定进度条与状态文本
 
-> 目标：将 `OnLoadingStatusChanged` 的进度与说明文字绑定到 UI（Slider + Text）。
+> 目标：将 `OnLoadingStatusChanged` 的进度与说明文字绑定到 UI(Slider + Text)。
 
 ## 步骤
 
-1. 在场景中放置 `Slider` 与 `Text`（或 TextMeshPro `TMP_Text`）
+1. 在场景中放置 `Slider` 与 `Text`(或 TextMeshPro `TMP_Text`)
 2. 新建脚本 `LoadingProgressUI.cs`，拖到 `DICOM_Loader` 上，并将引用拖拽到 Inspector
 3. 运行测试
 

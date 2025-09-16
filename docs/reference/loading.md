@@ -4,11 +4,11 @@
 
 > 本页为 **Loading** 相关公共 API 的权威说明。只列出对外可见/需使用的成员；内部实现细节以教程与解释篇为准。
 
-## DicomLoader（抽象基类 / MonoBehaviour）
+## DicomLoader(抽象基类 / MonoBehaviour)
 
 **序列化字段**
 
-* `string dicomFolderPath`：目标目录（相对 `StreamingAssets` 或绝对路径，取决于下项）
+* `string dicomFolderPath`：目标目录(相对 `StreamingAssets` 或绝对路径，取决于下项)
 * `bool useAbsolutePath`：是否把上项视为绝对路径
 * `bool verboseLogging`：是否打印详细日志
 
@@ -20,20 +20,20 @@
 
 **方法**
 
-* `StartLoading()`：开始加载流程（抽象）
-* `StopLoading()`：停止并清理（抽象）
+* `StartLoading()`：开始加载流程(抽象)
+* `StopLoading()`：停止并清理(抽象)
 
 ## DicomSeriesLoader : DicomLoader
 
 **用途**
 
-* 从指定目录（或索引）读取 DICOM 切片，构造 `DicomSeries`，期间多次回报进度
+* 从指定目录(或索引)读取 DICOM 切片，构造 `DicomSeries`，期间多次回报进度
 
 **常用成员**
 
 * `override void StartLoading()`：启动主协程
 * `override void StopLoading()`：取消加载，清理资源
-* （内部）索引解析、文件读取（兼容 UWP 的 UnityWebRequest）、像素解码与切片入列
+* (内部)索引解析、文件读取(兼容 UWP 的 UnityWebRequest)、像素解码与切片入列
 
 **最小使用示例**
 
@@ -50,7 +50,7 @@ public class Example : MonoBehaviour
 }
 ```
 
-## JSON 索引格式（建议）
+## JSON 索引格式(建议)
 
 ```json
 {
@@ -61,10 +61,10 @@ public class Example : MonoBehaviour
 }
 ```
 
-* `path` 支持相对（推荐）或绝对路径
+* `path` 支持相对(推荐)或绝对路径
 * 你可以扩展自定义键，但解析器至少需要 `slices[].path`
 
-## 事件触发时机（参考）
+## 事件触发时机(参考)
 
 * **StatusChanged**：索引阶段开始、扫描完成、每批文件处理完、收尾排序
 * **Complete**：所有切片成功入列且体素属性已确定

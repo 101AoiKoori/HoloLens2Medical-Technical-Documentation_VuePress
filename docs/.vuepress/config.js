@@ -1,18 +1,16 @@
-// docs/.vuepress/config.js
 import { defineUserConfig } from 'vuepress'
 import { viteBundler } from '@vuepress/bundler-vite'
 import { defaultTheme } from '@vuepress/theme-default'
 
-// ---- 自动生成侧边栏的辅助函数（可复用） ----
 import fs from 'fs'
 import path from 'path'
 import { fileURLToPath } from 'url'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
-const DOCS_ROOT = path.resolve(__dirname, '..') // 指向 docs/
+const DOCS_ROOT = path.resolve(__dirname, '..')
 
-// 将文件名转为更友好的标题：支持 01-xxx.md、01_xxx.md
+// ---------- 基础工具 ----------
 function fileNameToTitle (fileName) {
   const base = fileName.replace(/\.md$/i, '')
   const noIndex = base.replace(/^README$/i, '索引')
@@ -22,69 +20,88 @@ function fileNameToTitle (fileName) {
     .replace(/\b([a-z])/g, (_, c) => c.toUpperCase())
 }
 
-// 读取 md 第一行 H1 或 frontmatter title
 function readTitleFromMd (absPath) {
   try {
     const raw = fs.readFileSync(absPath, 'utf8')
-    // frontmatter: title: xxx
     const fm = raw.match(/^---[\s\S]*?^---/m)
     if (fm) {
       const m = fm[0].match(/^\s*title:\s*(.+)\s*$/mi)
       if (m) return m[1].trim().replace(/^['"]|['"]$/g, '')
     }
-    // 第一行 H1
     const h1 = raw.match(/^\s*#\s+(.+)$/m)
     if (h1) return h1[1].trim()
   } catch {}
   return null
 }
 
-// 列出目录下的 md 页面，返回 { text, link } 列表
 function listPages (relDir, { includeReadme = false } = {}) {
-  // 使用 posix 路径，避免 Windows 反斜杠
   const absDir = path.resolve(DOCS_ROOT, relDir)
   if (!fs.existsSync(absDir)) return []
 
   const files = fs
     .readdirSync(absDir)
     .filter(f => f.toLowerCase().endsWith('.md'))
-    .sort((a, b) => a.localeCompare(b, 'zh-Hans-CN')) // 支持带数字的排序
+    .sort((a, b) => a.localeCompare(b, 'zh-Hans-CN'))
 
   const items = []
   for (const f of files) {
     const isReadme = /^readme\.md$/i.test(f)
     if (!includeReadme && isReadme) continue
 
-    const title =
-      readTitleFromMd(path.resolve(absDir, f)) ||
-      fileNameToTitle(f)
-
-    // 目录式链接：README 用 /xxx/，其它用 /xxx/yyyy.html
-    const base = '/' + path.posix.join(relDir).replace(/(^|\/)README\.md$/i, '')
+    const title = readTitleFromMd(path.resolve(absDir, f)) || fileNameToTitle(f)
     const link = isReadme
-      ? '/' + path.posix.join(relDir.replace(/\/README\.md$/i, ''), '/') // /guide/loading/
-      : '/' + path.posix.join(relDir, f.replace(/\.md$/i, '.html'))      // /guide/loading/step-1.html
-
+      ? '/' + path.posix.join(relDir.replace(/\/README\.md$/i, ''), '/')
+      : '/' + path.posix.join(relDir, f.replace(/\.md$/i, '.html'))
     items.push({ text: title, link })
   }
   return items
 }
 
-// 为某个模块（如 guide/loading）生成「多分区」侧边栏
-function makeModuleSidebar (moduleKey, humanName) {
-  // 统一的 4 个子分区（可按需增删）
-  const groups = [
-    { text: '基础教程',     subdir: '' },
-    { text: '操作指南How-to', subdir: 'how-to' },
-    { text: '原理解读Explanation', subdir: 'explanations' },
-    { text: '故障排除Troubleshooting', subdir: 'troubleshooting' },
-  ]
+function listMdInSubdir (relDir) {
+  const absDir = path.resolve(DOCS_ROOT, relDir)
+  if (!fs.existsSync(absDir)) return []
 
-  const base = `guide/${moduleKey}` // 相对 docs 的路径
+  const dirs = fs.readdirSync(absDir).filter(d => {
+    const p = path.join(absDir, d)
+    return fs.statSync(p).isDirectory()
+  })
+
+  const groups = []
+  for (const sub of dirs) {
+    const subRel = path.posix.join(relDir, sub)
+    const subAbs = path.resolve(DOCS_ROOT, subRel)
+    const mdFiles = fs.readdirSync(subAbs)
+      .filter(f => f.toLowerCase().endsWith('.md'))
+      .sort((a, b) => a.localeCompare(b, 'zh-Hans-CN'))
+
+    const children = mdFiles.map(f => {
+      const abs = path.join(subAbs, f)
+      const title = readTitleFromMd(abs) || fileNameToTitle(f)
+      const isReadme = /^readme\.md$/i.test(f)
+      const link = isReadme
+        ? '/' + path.posix.join(subRel, '/')
+        : '/' + path.posix.join(subRel, f.replace(/\.md$/i, '.html'))
+      return { text: title, link }
+    })
+
+    if (children.length > 0) {
+      groups.push({
+        text: fileNameToTitle(sub),
+        collapsible: true,
+        collapsed: true,
+        children
+      })
+    }
+  }
+  return groups
+}
+
+// ---------- 模块侧边栏 ----------
+function makeModuleSidebar (modulePath, humanName) {
+  const base = `guide/${modulePath}`
   const result = []
 
-  // 模块索引页（/guide/<module>/README.md）
-  const indexItems = listPages(`${base}`, { includeReadme: true })
+  const indexItems = listPages(base, { includeReadme: true })
   if (indexItems.length) {
     result.push({
       text: `${humanName} · 索引`,
@@ -94,37 +111,68 @@ function makeModuleSidebar (moduleKey, humanName) {
     })
   }
 
-  for (const g of groups) {
-    const rel = g.subdir ? `${base}/${g.subdir}` : `${base}`
-    const children = listPages(rel, { includeReadme: g.subdir !== '' })
-    if (children.length) {
+  const expBase = `${base}/explanations`
+  if (fs.existsSync(path.resolve(DOCS_ROOT, expBase))) {
+    const expTop = listPages(expBase, { includeReadme: false }) 
+    const expSub = listMdInSubdir(expBase)
+    const expChildren = [...expTop]
+
+    if (expSub.length > 0) expChildren.push(...expSub)
+
+    if (expChildren.length > 0) {
       result.push({
-        text: g.text,
+        text: '原理解读',
         collapsible: true,
         collapsed: true,
-        children,
+        children: expChildren,
       })
     }
   }
+
+  const howtoBase = `${base}/how-to`
+  if (fs.existsSync(path.resolve(DOCS_ROOT, howtoBase))) {
+    const howTop = listPages(howtoBase, { includeReadme: false })
+    const howSub = listMdInSubdir(howtoBase)
+    const howChildren = [...howTop]
+    if (howSub.length > 0) howChildren.push(...howSub)
+
+    if (howChildren.length > 0) {
+      result.push({
+        text: '操作指南',
+        collapsible: true,
+        collapsed: true,
+        children: howChildren,
+      })
+    }
+  }
+
   return result
 }
 
-// ---- 你可以在这里配置模块清单（教程线） ----
-// TODO: 按需增删模块；第二列是显示名
-const MODULES = [
-  ['core',            'Core'],
-  ['imaging',         'Imaging'],
-  ['loading',         'Loading'],
-  ['ui',              'UI'],
-  ['viewers',         'Viewers'],
-  ['visualization3d', 'Visualization3D'],
-]
+function scanModules () {
+  const guideDir = path.resolve(DOCS_ROOT, 'guide')
+  const modules = []
+  if (!fs.existsSync(guideDir)) return modules
 
-// 参考线（/reference/）：自动读取该目录下的 md
+  for (const item of fs.readdirSync(guideDir)) {
+    const absPath = path.join(guideDir, item)
+    if (fs.statSync(absPath).isDirectory()) {
+      modules.push([item, fileNameToTitle(item)])
+
+      for (const sub of fs.readdirSync(absPath)) {
+        const subPath = path.join(absPath, sub)
+        if (fs.statSync(subPath).isDirectory() &&
+            !['explanations', 'how-to', 'troubleshooting'].includes(sub.toLowerCase())) {
+          modules.push([`${item}/${sub}`, `${fileNameToTitle(item)} · ${fileNameToTitle(sub)}`])
+        }
+      }
+    }
+  }
+  return modules
+}
+
 function makeReferenceSidebar () {
-  const items = [
-    { text: '总览', link: '/reference/' }
-  ].concat(listPages('reference'))
+  const items = [{ text: '总览', link: '/reference/' }].concat(listPages('reference'))
   return [
     {
       text: '参考与 API',
@@ -135,24 +183,22 @@ function makeReferenceSidebar () {
   ]
 }
 
-// /guide/ 的“模块目录”分组（指向各模块首页）
-function makeGuideHomeSidebar () {
-  const moduleLinks = MODULES.map(([k, name]) => ({
-    text: name,
-    link: `/guide/${k}/`, // 指向模块 README
-  }))
+function makeGuideHomeSidebar (modules) {
+  const moduleLinks = modules
+    .filter(([k]) => !k.includes('/'))
+    .map(([k, name]) => ({ text: name, link: `/guide/${k}/` }))
   return [
     {
       text: '开始',
       collapsible: true,
       collapsed: false,
       children: [
-        { text: '简介',     link: '/guide/' },
-        { text: '环境搭建', link: '/guide/setup/' },
+        { text: '简介', link: '/guide/' },
+        { text: '工程搭建', link: '/guide/setup/' },
       ],
     },
     {
-      text: '功能模块（教程）',
+      text: '功能模块(教程)',
       collapsible: true,
       collapsed: false,
       children: moduleLinks,
@@ -160,47 +206,40 @@ function makeGuideHomeSidebar () {
   ]
 }
 
-// 组装所有 sidebar 映射
-function buildSidebarMapping () {
+function buildSidebarMapping (modules) {
   const map = {
-    '/guide/': makeGuideHomeSidebar(),
+    '/guide/': makeGuideHomeSidebar(modules),
     '/reference/': makeReferenceSidebar(),
   }
-  // 为每个模块添加独立的多分区侧边栏
-  for (const [key, name] of MODULES) {
+  for (const [key, name] of modules) {
     map[`/guide/${key}/`] = makeModuleSidebar(key, name)
   }
   return map
 }
 
-// -----------------------------------------------
+// ---------- 导出 ----------
+const MODULES = scanModules()
 
 export default defineUserConfig({
   lang: 'zh-CN',
-  title: 'MRTK Medical Technical Documentation',
+  title: 'HoloLens2Medical Technical Documentation',
   description: 'DICOM + MRTK3 in Unity — 医学影像可视化与交互方案',
   bundler: viteBundler(),
 
-  head: [
-    ['meta', { name: 'theme-color', content: '#3eaf7c' }],
-  ],
+  head: [['meta', { name: 'theme-color', content: '#3eaf7c' }]],
 
   theme: defaultTheme({
     navbar: [
       { text: '指南', link: '/guide/' },
       { text: '参考', link: '/reference/' },
-      { text: 'HoloLens2Medical', link: 'https://github.com/Fantastic2020/HoloLens2Medical' }, // TODO: 替换为你的仓库
+      { text: 'HoloLens2Medical', link: 'https://github.com/Fantastic2020/HoloLens2Medical' },
     ],
-
-    // 仓库信息（可选）
-    repo: '101AoiKoori/MRTK-Medical-Technical-Documentation_VuePress',           // TODO: 替换
+    repo: '101AoiKoori/HoloLens2Medical-Technical-Documentation_VuePress',
     docsDir: 'docs',
     editLink: true,
+    lastUpdated: false,
     editLinkText: '在 GitHub 上编辑此页',
-    lastUpdated: true,
     contributors: false,
-
-    // 关键：侧边栏映射（自动生成）
-    sidebar: buildSidebarMapping(),
+    sidebar: buildSidebarMapping(MODULES),
   }),
 })

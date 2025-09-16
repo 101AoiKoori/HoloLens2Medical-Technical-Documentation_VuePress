@@ -1,103 +1,36 @@
-# Loading 模块——从索引加载 DICOM 序列（UWP/HL2 友好）
+# Viewers (MPRViewer) 模块指南
 
-> 本页目标：完成从本地资源文件夹加载一套 DICOM 序列到场景，拿到体素信息，并触发进度/完成/失败事件。
+> 这是 HoloLens2Medical 工程中三平面浏览功能的官方文档索引。该模块封装了三平面纹理展示、切片导航、窗位/窗宽调节、后台加载和资源管理等功能。文档采用 VuePress 结构，你可以在此快速找到对应教程、原理讲解和 API 参考。
 
-## 本章完成后你将会
+## 模块简介
+MPRViewer 旨在提供一个便于扩展的三平面医学影像浏览器，帮助开发者在 HoloLens 2 / UWP 平台上快速构建 DICOM 数据的交互式展示。模块使用 partial class 拆分逻辑，区分加载、切片、窗宽窗位、纹理更新与协程管理等子系统，并通过事件暴露接口。
 
-* 在场景中添加并配置 **DicomSeriesLoader** 组件
-* 使用按钮一键触发加载流程 `StartLoading()` / `StopLoading()`
-* 订阅 `OnLoadingStatusChanged` / `OnLoadingComplete` / `OnLoadingFailed`
-* 了解 `StreamingAssets` 与 **绝对路径** 两种读法的差异
+## 快速上手
+1. 在 Unity 场景中添加 `MPRViewer` 组件，绑定三个 `RawImage` 用于显示 Axial/ Sagittal/ Coronal 切片。
+2. 调用 `LoadDicomData()` 启动加载流程。推荐启用 `useProgressiveLoading` 以快速显示轴向首帧。
+3. 使用滑块或手势控制索引和窗宽窗位。常用接口包括：
+   - `SetSliceIndex(DicomPlane.PlaneType plane, int index)`
+   - `SetWindowLevel(float center, float width)`
+   - `ResetView()`
 
-## 前置条件
+## 文档目录
+- **原理拆解(explanations)**
+  - [架构总览](./explanations/architecture.md)：了解模块拆分、生命周期及事件。
+  - [数据与控制流程](./explanations/data-flow.md)：梳理从加载到显示的时序。
+  - [切片索引与预取](./explanations/slice-indexing.md)：解释索引计算与后台预取策略。
+  - [窗位与窗宽](./explanations/window-level.md)：讲解调整窗位窗宽的模式与边界。
+  - [内存与协程](./explanations/memory-and-coroutines.md)：概述资源释放、协程追踪与内存监测。
 
-* Unity（建议 2021 LTS+）
-* MRTK3 已导入
-* 目标平台：UWP（HoloLens 2）或 PC Standalone
-* 资源放置：
+- **操作流程(how-to)**
+  - [挂载与配置 MPRViewer](./how-to/setup-mprviewer.md)：详解组件添加和 Inspector 参数。
+  - [加载 DICOM 序列](./how-to/load-dicom-series.md)：介绍最小加载流程及回调。
+  - [切片导航](./how-to/navigate-slices.md)：指导滑块/手势绑定到索引切换。
+  - [调整窗位窗宽](./how-to/change-windowlevel.md)：演示使用滑块调整窗位/窗宽。
+  - [一键复位](./how-to/reset-view.md)：讲述恢复默认状态的步骤。
+  - [渐进与后台加载](./how-to/background-loading.md)：如何开启渐进模式与后台预取。
+  - [故障排查](./how-to/troubleshooting.md)：汇总常见问题及修复建议。
 
-  * 推荐：`Assets/StreamingAssets/DICOM/YourSeries/` 目录下放置若干 `.dcm`
-  * 可选：同级放置 `dicom_index.json`（未提供也没关系，会自动扫描生成）
+## 推荐流程
+阅读顺序建议先浏览“架构总览”，再按需深入“数据与控制流程”，最后根据具体需求查阅操作流程和 API 参考。本模块文档保持简洁、实用，目的是让开发者迅速理解半成品的实现细节并完成后续完善。
 
-> **提示**
-> 序列越完整、文件命名越规范，自动索引和排序越稳定。建议使用 4 位或 5 位递增序号命名切片：`0001.dcm, 0002.dcm, ...`。
-
-## 场景搭建
-
-1. 在层级面板中创建空物体 `DICOM_Loader`
-2. 添加组件 **DicomSeriesLoader**（命名空间：`MedicalMR.DICOM.Loading`）
-3. 在 Inspector 设置：
-
-   * **Dicom Folder Path**：例如 `DICOM/YourSeries/`（相对 `StreamingAssets`）
-   * **Use Absolute Path**：默认关闭；若勾选，输入绝对路径（见 How‑to 篇）
-   * **Verbose Logging**：可选，打印更详细的加载日志
-4. 新建脚本 `DicomLoadDemo.cs`，挂在同一物体上，并绑定一个 UI Button 的 OnClick → `DoLoad()`
-
-```csharp
-using UnityEngine;
-using MedicalMR.DICOM.Loading;
-
-public class DicomLoadDemo : MonoBehaviour
-{
-    public DicomSeriesLoader loader;
-
-    void Awake()
-    {
-        // 进度 & 状态
-        loader.OnLoadingStatusChanged.AddListener((p, s) =>
-            Debug.Log($"[Loading] {p:P0} - {s}"));
-
-        // 成功
-        loader.OnLoadingComplete.AddListener((seriesObj, dims, spacing, origin) =>
-        {
-            Debug.Log($"[Completed] dims={dims} spacing={spacing} origin={origin}");
-            // TODO: 将结果传给你的 Viewer / UI 层
-        });
-
-        // 失败
-        loader.OnLoadingFailed.AddListener(err => Debug.LogError($"[Failed] {err}"));
-    }
-
-    public void DoLoad()  => loader.StartLoading();
-    public void Cancel()  => loader.StopLoading();
-}
-```
-
-> **验证**
-> 运行后点击按钮，应看到 Console 持续打印进度，最终出现“Completed”日志；若路径错误或索引为空，会收到“Failed”日志。
-
-## 索引文件（可选）
-
-若手动提供 `dicom_index.json`，推荐结构如下：
-
-```json
-{
-  "slices": [
-    { "path": "DICOM/YourSeries/0001.dcm" },
-    { "path": "DICOM/YourSeries/0002.dcm" }
-  ]
-}
-```
-
-> **说明**
-> 未提供索引时，加载器会在目标目录中扫描 `.dcm` 文件并生成同结构的索引后再加载。索引减少 UWP 文件系统限制带来的不确定性，也能避免错读其它格式。
-
-## 常见目录结构
-
-```
-Assets/
-  StreamingAssets/
-    DICOM/
-      YourSeries/
-        0001.dcm
-        0002.dcm
-        ...
-        dicom_index.json   # 可选
-```
-
-## 下一步
-
-* [绑定进度条与状态文本](./how-to/bind-progress.html)
-* [改为绝对路径加载（PC/HL2）](./how-to/load-from-absolute-path.html)
-* [理解：完整加载流水线与数据结构](./explanations/flow.html)
-* [故障排除：路径、JSON、黑屏等](./troubleshooting/common-issues.html)
+> 如有不清楚之处，可参考各 explanations 文件中的“细节补充”部分，或在实现时查阅源码了解更多细节。

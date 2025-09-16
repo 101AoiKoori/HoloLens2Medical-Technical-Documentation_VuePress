@@ -2,7 +2,7 @@
 
 > 本页解释 Loading 的整体控制流、索引策略、切片数据结构与进度模型。
 
-## 整体流程（文字图）
+## 整体流程(文字图)
 
 ```
 [定位目录/索引]
@@ -13,18 +13,18 @@
 [解析 JSON 列表]
       ▼
 [for each 路径]
-  ├─ 读取字节（兼容 UWP）
+  ├─ 读取字节(兼容 UWP)
   ├─ 打开 DICOM / 提取像素与元数据
-  ├─ 构造 DicomSlice（记录窗位/间距/方位等）
-  └─ 添加进 DicomSeries（首张时初始化体素属性）
+  ├─ 构造 DicomSlice(记录窗位/间距/方位等)
+  └─ 添加进 DicomSeries(首张时初始化体素属性)
       ▼
 [排序/收尾 → 触发完成事件]
 ```
 
 ## 索引策略
 
-* 支持**手动索引**（`dicom_index.json`）与**自动索引**（扫描目录生成）
-* 索引项至少包含 `path`（相对或绝对）
+* 支持**手动索引**(`dicom_index.json`)与**自动索引**(扫描目录生成)
+* 索引项至少包含 `path`(相对或绝对)
 * 好处：
 
   * 避免把非 DICOM 文件读入
@@ -32,13 +32,13 @@
 
 ## 切片与序列
 
-* **DicomSlice**：像素数据 + 关键元信息（ImagePosition、PixelSpacing、SliceThickness、WindowCenter/Width、Width/Height…）
-* **DicomSeries**：切片集合与体素属性（维度、体素间距、坐标原点、主方向），为后续 Viewer/MPR 提供统一入口
+* **DicomSlice**：像素数据 + 关键元信息(ImagePosition、PixelSpacing、SliceThickness、WindowCenter/Width、Width/Height…)
+* **DicomSeries**：切片集合与体素属性(维度、体素间距、坐标原点、主方向)，为后续 Viewer/MPR 提供统一入口
 
 ## 进度模型
 
 * 索引阶段：≈ 0% → 20%
-* 批量读取：20% → 90%（按文件数线性推进）
+* 批量读取：20% → 90%(按文件数线性推进)
 * 收尾/排序：90% → 100%
 
 > **性能与内存**
