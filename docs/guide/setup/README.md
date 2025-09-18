@@ -96,31 +96,55 @@ Assets/StreamingAssets/
 * `HandMenuLarge`预制件包括了3个部分，左侧为基础`MRTK3`交互模块，从上到下的功能是：**重置STL模型位置**、**标记模式**、**测距模式**、**清除标记和线条**;右侧是`DICOM`数据交互模块，从上到下分别是：**加载`DICOM`数据**、**重置视图**、**隐藏3D模块平面**、**关闭`STL`模型外框`BoxCollider`** 
 ![HandMenuLarge](./img/HandMenuLarge.png)
 
-4. 放置好DICOM数据文件以及完成如上的配置后，就可以正常加载dicom数据了。
+4. 放置好`DICOM`数据文件以及完成如上的配置后，就可以正常加载`dicom`数据了。
 
-### 4.3 STL模块配置
-1. 
+### 4.3 STL(visualization3d) 模块配置
+![alt text](./img/BoundingBoxWithHandles.png)
+>为了方便拖动整个`STL`模型，我们的做法是在存放`STL`的父级对象挂载`bounds control`,官方教程请查看[Add bounds control](https://learn.microsoft.com/en-us/training/modules/get-started-with-object-interaction/5-7-exercise-manipulate-3d-objects-with-bounds-control)
 
-### 4.4推荐的场景层级模板：
+1. 创建`STLModule`空物体，在其子级创建`STL`空物体，`STL`对象为`MRTK3`组件与`3D`组件交互的对象基础，在`STL`对象上添加依次挂载`Box Collider、ConstraintManager、BoundsControl、StatefulInteractable、ObjectManipulator`组件。
+* 在`BoundsControl`组件中将`BoundingBoxWithHandles`预制件拖入`bounds visuals prefab`里，将`Hierarchy`的`STL`对象拖入`Target`中,打开`Handles Actice`后即可在运行窗口中看到`BoundingBoxWithHandles`操作边界，边界大小由`Box Collider`的大小决定
+![alt text](./img/BoundsControl.png)
 
+2. 在`STL`子级中添加`DicomSlices`对象，`DicomSlices`对象用于控制以及显示3D切面，因此请在`DicomSlices`的子级中创建`AxialPlane`、`SagittalPlane`、`CoronalPlane`三个空物体，在`DicomSlices`上挂载`DicomSlice3DManager`和`DicomTextureBridge`组件。
+* 将三个空物体依次拖入`DicomPlaneController`的`平面配置中`。为了使三个平面正常渲染，请将放置在`Custom`中的`Computer Shader`:`DicomSliceShader`拖入材质设置中。
+![alt text](./img/DicomPlaneController.png)
+
+3. 最后，由于`STL`对象设置了`Box Collider`，它会让MRTK3的交互仅限在`Box Collider`表面上,以及`3D切面`会在视觉上阻挡`STL`模型，因此需要额外配置一个`UI`组件让我们可以关闭`Box Collider`以及`3D切面`。
+* 在`STL`子级中添加`MPRVisibility`对象，在`3D切面管理`选择`DicomSlices`,将`STL`对象拖入包围盒碰撞列表.
+![alt text](./img/MPRVisibility.png)
+
+#### 至此DICOM交互场景必要的组件都配置好了。
+
+## 5.推荐的场景层级模板：
 ```
+STLModule
+  ├─STL(挂载Box Collider、ConstraintManager、BoundsControl、StatefulInteractable、ObjectManipulator)
+  |   ├─Model
+  |   |   ├─动脉血管(STL模型)
+  |   |   ├─占位(STL模型)
+  |   |   ├─囊肿(STL模型)
+  |   |   ...
+  |   |   └─门静脉(STL模型)
+  |   ├─DicomSlices(挂载DicomSlice3DManager、DicomTextureBridge)
+  |   |   ├─AxialPlane(轴位 空物体，会自动挂载Plane)
+  |   |   ├─SagittalPlane(冠状位 空物体，会自动挂载Plane)
+  |   |   └─CoronalPlane(矢状位 空物体，会自动挂载Plane)
+  |   └─MPRVisibility(挂载MPRVisibilityController)
+  |
 DICOMModule
- ├─ Plane
- │   ├─ Axial       (轴位 Canvas，下挂 Raw Image：AxialRaw)
- │   │   └─ AxialRaw (Raw Image, 1×1 单位)
- │   ├─ Coronal     (冠状位 Canvas，下挂 Raw Image：CoronalRaw)
- │   │   └─ CoronalRaw (Raw Image, 1×1 单位)
- │   └─ Sagittal    (矢状位 Canvas，下挂 Raw Image：SagittalRaw)
- │       └─ SagittalRaw (Raw Image, 1×1 单位)
- ├─ DicomSystem     (DicomSeries、DicomTextureBridge 等核心脚本挂载)
- └─ MPRVisibility   (多平面可视化开关控制)
+  ├─ Plane
+  │   ├─ Axial       (轴位 Canvas，下挂 Raw Image：AxialRaw)
+  │   │   └─ AxialRaw (Raw Image, 1×1 单位)
+  │   ├─ Coronal     (冠状位 Canvas，下挂 Raw Image：CoronalRaw)
+  │   │   └─ CoronalRaw (Raw Image, 1×1 单位)
+  │   └─ Sagittal    (矢状位 Canvas，下挂 Raw Image：SagittalRaw)
+  │       └─ SagittalRaw (Raw Image, 1×1 单位)
+  ├─ DicomSystem     (DicomSeries、DicomTextureBridge 等核心脚本挂载)
+  └─ MPRVisibility   (多平面可视化开关控制)
 
 ```
-
 ---
-## 5. 下一步
-
-* 进阶：前往 **“数据加载(how-to)”** 学习 DICOM 索引与流式读取
-* 进阶：前往 **“原理解读(explanations)”** 了解窗宽窗位/体绘制/Shader 管线
-* 最终：**Build & Deploy** 到 HoloLens 2 进行实机测试
+## 6. 下一步
+* [返回首页](../README.md)
 ---
