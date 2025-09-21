@@ -31,10 +31,10 @@ Cache 模块负责在有限内存中高效存储和复用各平面 (Axial / Coro
 
 | 页面 | 任务简述 |
 |---|---|
-| [clear-cache](how_to/Cache/clear-cache.html) | 如何选择性或完全清理缓存。 |
-| [set-cache-limits](how_to/Cache/set-cache-limits.html) | 配置每个切面的缓存数量和内存上限。 |
-| [retrieve-and-store-textures](how_to/Cache/retrieve-and-store-textures.html) | 正确地从缓存获取、更新 LRU、标记活跃/可见纹理，并存入新的纹理。 |
-| [manage-window-level](how_to/Cache/manage-window-level.html) | 管理窗宽窗位键，确保不同 WL/WW 下的纹理互不干扰。 |
+| [clear-cache](implementation/Cache/clear-cache.html) | 如何选择性或完全清理缓存。 |
+| [set-cache-limits](implementation/Cache/set-cache-limits.html) | 配置每个切面的缓存数量和内存上限。 |
+| [retrieve-and-store-textures](implementation/Cache/retrieve-and-store-textures.html) | 正确地从缓存获取、更新 LRU、标记活跃/可见纹理，并存入新的纹理。 |
+| [manage-window-level](implementation/Cache/manage-window-level.html) | 管理窗宽窗位键，确保不同 WL/WW 下的纹理互不干扰。 |
 
 阅读顺序建议：先了解缓存架构，再根据需要查阅淘汰策略和内存管理，最后参考操作指南中的具体任务。
 
@@ -66,11 +66,11 @@ Creation 模块负责将 DICOM 序列转换为 Unity 的 `Texture2D`，涵盖三
 
 | 页面 | 任务简述 |
 |---|---|
-| [generate-axial-texture](how_to/Cache/generate-axial-texture.html) | 获取单个轴向纹理并响应纹理更新事件。 |
-| [generate-coronal-sagittal-texture](how_to/Cache/generate-coronal-sagittal-texture.html) | 生成冠状和矢状面纹理，包括优先使用体素缓存和回退方法。 |
-| [preload-axial-textures](how_to/Cache/preload-axial-textures.html) | 批量预加载轴向纹理以提高滚动流畅度。 |
-| [cache-volume-data](how_to/Cache/cache-volume-data.html) | 缓存原始体素数据并应用窗宽窗位，供横截面快速提取。 |
-| [set-window-level](how_to/Cache/set-window-level.html) | 设置窗宽窗位并通知界面刷新。 |
+| [generate-axial-texture](implementation/Cache/generate-axial-texture.html) | 获取单个轴向纹理并响应纹理更新事件。 |
+| [generate-coronal-sagittal-texture](implementation/Cache/generate-coronal-sagittal-texture.html) | 生成冠状和矢状面纹理，包括优先使用体素缓存和回退方法。 |
+| [preload-axial-textures](implementation/Cache/preload-axial-textures.html) | 批量预加载轴向纹理以提高滚动流畅度。 |
+| [cache-volume-data](implementation/Cache/cache-volume-data.html) | 缓存原始体素数据并应用窗宽窗位，供横截面快速提取。 |
+| [set-window-level](implementation/Cache/set-window-level.html) | 设置窗宽窗位并通知界面刷新。 |
 
 
 # MPR 模块概览
@@ -99,10 +99,10 @@ MPR 模块负责的流程包括：请求排序、优先级计算、同步/异步
 
 | 页面 | 任务简述 |
 |---|---|
-| [get-texture](how_to/Cache/get-texture.html) | 使用 MPRTextureManager 获取纹理；当缓存未命中时根据优先级异步创建。 |
-| [set-dicom-series](how_to/Cache/set-dicom-series.html) | 设置新的 DicomSeries 并重置状态。 |
-| [set-window-level-and-indices](how_to/Cache/set-window-level-and-indices.html) | 更新当前窗宽窗位和切片索引以调整优先级。 |
-| [manage-requests](how_to/Cache/manage-requests.html) | 清空请求队列、取消任务、限制并发等操作。 |
-| [memory-optimization](how_to/Cache/memory-optimization.html) | 调整内存检测和资源释放参数以优化运行时性能。 |
+| [get-texture](implementation/Cache/get-texture.html) | 使用 MPRTextureManager 获取纹理；当缓存未命中时根据优先级异步创建。 |
+| [set-dicom-series](implementation/Cache/set-dicom-series.html) | 设置新的 DicomSeries 并重置状态。 |
+| [set-window-level-and-indices](implementation/Cache/set-window-level-and-indices.html) | 更新当前窗宽窗位和切片索引以调整优先级。 |
+| [manage-requests](implementation/Cache/manage-requests.html) | 清空请求队列、取消任务、限制并发等操作。 |
+| [memory-optimization](implementation/Cache/memory-optimization.html) | 调整内存检测和资源释放参数以优化运行时性能。 |
 ---
 * [返回首页](../README.md)

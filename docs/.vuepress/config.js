@@ -130,7 +130,7 @@ function makeModuleSidebar (modulePath, humanName) {
   }
 
   // 操作指南（同上）
-  const howtoBase = `${base}/how_to`
+  const howtoBase = `${base}/implementation`
   if (fs.existsSync(path.resolve(DOCS_ROOT, howtoBase))) {
     const howTop = listPages(howtoBase, { includeReadme: false })
     const howTree = listMdTree(howtoBase)
@@ -164,7 +164,7 @@ function scanModules () {
       for (const sub of fs.readdirSync(absPath)) {
         const subPath = path.join(absPath, sub)
         if (fs.statSync(subPath).isDirectory() &&
-            !['explanations', 'how_to', 'troubleshooting'].includes(sub.toLowerCase())) {
+            !['explanations', 'implementation', 'troubleshooting'].includes(sub.toLowerCase())) {
           modules.push([`${item}/${sub}`, `${fileNameToTitle(item)} · ${fileNameToTitle(sub)}`])
         }
       }

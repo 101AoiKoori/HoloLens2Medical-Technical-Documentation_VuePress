@@ -52,13 +52,13 @@ Loading 模块围绕以下核心类与功能展开：
 * [状态与进度同步](./explanations/loading/06_progress_update.html)
 * [验证与体积信息推导](./explanations/loading/07_volume_validation.html)
 
-### how_to 按功能划分的最小实现示例
+### implementation 按功能划分的最小实现示例
 
-* [使用 DicomSeriesLoader 加载序列并监听事件](./how_to/loading/01_use_seriesloader.html)
-* [配置或生成 JSON 索引文件](./how_to/loading/02_configure_index.html)
-* [获取加载结果中的体积信息](./how_to/loading/03_get_volume_info.html)
-* [处理加载失败并输出错误日志](./how_to/loading/04_handle_errors.html)
+* [使用 DicomSeriesLoader 加载序列并监听事件](./implementation/loading/01_use_seriesloader.html)
+* [配置或生成 JSON 索引文件](./implementation/loading/02_configure_index.html)
+* [获取加载结果中的体积信息](./implementation/loading/03_get_volume_info.html)
+* [处理加载失败并输出错误日志](./implementation/loading/04_handle_errors.html)
 
->建议首先阅读 **explanations** 下的原理文档，理解加载流程如何分层实现；随后在 **how_to** 中运行最小示例，验证 DICOM 数据能否在 Unity 场景中被正确加载。
+>建议首先阅读 **explanations** 下的原理文档，理解加载流程如何分层实现；随后在 **implementation** 中运行最小示例，验证 DICOM 数据能否在 Unity 场景中被正确加载。
 ---
 * [返回首页](../README.md)

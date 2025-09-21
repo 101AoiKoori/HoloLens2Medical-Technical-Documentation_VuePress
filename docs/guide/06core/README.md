@@ -34,12 +34,12 @@ Core 模块围绕几个关键类展开：
   * [坐标系与方向映射](./explanations/03_orientation_mapping.html)
   * [像素数据解码与纹理生成](./explanations/04_slice_data_and_texture.html)
 
-### how_to 按功能划分的最小实现示例
+### implementation 按功能划分的最小实现示例
 
-  * [设置体积属性](./how_to/01_set_volume_properties.html)
-  * [切片的添加、排序与释放](./how_to/02_manage_slices.html)
-  * [坐标映射实例](./how_to/03_coordinate_mapping_examples.html)
-  * [从切片生成纹理并显示](./how_to/04_create_texture_from_slice.html)
+  * [设置体积属性](./implementation/01_set_volume_properties.html)
+  * [切片的添加、排序与释放](./implementation/02_manage_slices.html)
+  * [坐标映射实例](./implementation/03_coordinate_mapping_examples.html)
+  * [从切片生成纹理并显示](./implementation/04_create_texture_from_slice.html)
 
 ---
 * [返回首页](../README.md)
