@@ -10,10 +10,10 @@ const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 const DOCS_ROOT = path.resolve(__dirname, '..')
 
-// ---------- 基础工具 ----------
+// ---------- 基础工具（保持你的实现风格） ----------
 function fileNameToTitle (fileName) {
   const base = fileName.replace(/\.md$/i, '')
-  const noIndex = base.replace(/^README$/i, '索引')
+  const noIndex = base.replace(/^README$/i, 'API')
   const noPrefix = noIndex.replace(/^\d+[-_]?/, '')
   return noPrefix
     .replace(/[-_]/g, ' ')
@@ -57,50 +57,50 @@ function listPages (relDir, { includeReadme = false } = {}) {
   return items
 }
 
-function listMdInSubdir (relDir) {
+// 递归列出任意深度的子目录（不依赖 README）→ 返回分组数组
+function listMdTree (relDir) {
   const absDir = path.resolve(DOCS_ROOT, relDir)
   if (!fs.existsSync(absDir)) return []
 
-  const dirs = fs.readdirSync(absDir).filter(d => {
+  // 只看下一级子目录
+  const subDirs = fs.readdirSync(absDir).filter(d => {
     const p = path.join(absDir, d)
     return fs.statSync(p).isDirectory()
   })
 
   const groups = []
-  for (const sub of dirs) {
+  for (const sub of subDirs) {
     const subRel = path.posix.join(relDir, sub)
     const subAbs = path.resolve(DOCS_ROOT, subRel)
-    const mdFiles = fs.readdirSync(subAbs)
-      .filter(f => f.toLowerCase().endsWith('.md'))
-      .sort((a, b) => a.localeCompare(b, 'zh-Hans-CN'))
 
-    const children = mdFiles.map(f => {
-      const abs = path.join(subAbs, f)
-      const title = readTitleFromMd(abs) || fileNameToTitle(f)
-      const isReadme = /^readme\.md$/i.test(f)
-      const link = isReadme
-        ? '/' + path.posix.join(subRel, '/')
-        : '/' + path.posix.join(subRel, f.replace(/\.md$/i, '.html'))
-      return { text: title, link }
-    })
+    // 本子目录下的 md（包含 README 也可、但不是必须）
+    const pages = listPages(subRel, { includeReadme: true })
 
-    if (children.length > 0) {
+    // 更深层继续递归
+    const deeper = listMdTree(subRel)
+
+    const children = []
+    if (pages.length) children.push(...pages)
+    if (deeper.length) children.push(...deeper)
+
+    if (children.length) {
       groups.push({
         text: fileNameToTitle(sub),
         collapsible: true,
         collapsed: true,
-        children
+        children,
       })
     }
   }
   return groups
 }
 
-// ---------- 模块侧边栏 ----------
+// ---------- 模块侧边栏（保留你的结构 + 递归增强） ----------
 function makeModuleSidebar (modulePath, humanName) {
   const base = `guide/${modulePath}`
   const result = []
 
+  // 索引（含 README 与根层其它 md）
   const indexItems = listPages(base, { includeReadme: true })
   if (indexItems.length) {
     result.push({
@@ -111,15 +111,15 @@ function makeModuleSidebar (modulePath, humanName) {
     })
   }
 
+  // 原理解读（顶层 md + 任意深度子目录）
   const expBase = `${base}/explanations`
   if (fs.existsSync(path.resolve(DOCS_ROOT, expBase))) {
-    const expTop = listPages(expBase, { includeReadme: false }) 
-    const expSub = listMdInSubdir(expBase)
-    const expChildren = [...expTop]
-
-    if (expSub.length > 0) expChildren.push(...expSub)
-
-    if (expChildren.length > 0) {
+    const expTop = listPages(expBase, { includeReadme: false })
+    const expTree = listMdTree(expBase)
+    const expChildren = []
+    if (expTop.length) expChildren.push(...expTop)
+    if (expTree.length) expChildren.push(...expTree)
+    if (expChildren.length) {
       result.push({
         text: '原理解读',
         collapsible: true,
@@ -129,14 +129,15 @@ function makeModuleSidebar (modulePath, humanName) {
     }
   }
 
-  const howtoBase = `${base}/how-to`
+  // 操作指南（同上）
+  const howtoBase = `${base}/how_to`
   if (fs.existsSync(path.resolve(DOCS_ROOT, howtoBase))) {
     const howTop = listPages(howtoBase, { includeReadme: false })
-    const howSub = listMdInSubdir(howtoBase)
-    const howChildren = [...howTop]
-    if (howSub.length > 0) howChildren.push(...howSub)
-
-    if (howChildren.length > 0) {
+    const howTree = listMdTree(howtoBase)
+    const howChildren = []
+    if (howTop.length) howChildren.push(...howTop)
+    if (howTree.length) howChildren.push(...howTree)
+    if (howChildren.length) {
       result.push({
         text: '操作指南',
         collapsible: true,
@@ -149,6 +150,7 @@ function makeModuleSidebar (modulePath, humanName) {
   return result
 }
 
+// 扫描 guide 下的模块（保持你原来的写法）
 function scanModules () {
   const guideDir = path.resolve(DOCS_ROOT, 'guide')
   const modules = []
@@ -162,7 +164,7 @@ function scanModules () {
       for (const sub of fs.readdirSync(absPath)) {
         const subPath = path.join(absPath, sub)
         if (fs.statSync(subPath).isDirectory() &&
-            !['explanations', 'how-to', 'troubleshooting'].includes(sub.toLowerCase())) {
+            !['explanations', 'how_to', 'troubleshooting'].includes(sub.toLowerCase())) {
           modules.push([`${item}/${sub}`, `${fileNameToTitle(item)} · ${fileNameToTitle(sub)}`])
         }
       }
@@ -171,16 +173,50 @@ function scanModules () {
   return modules
 }
 
+// Reference：根层“总览” + 每个一级目录成组，并对其子目录递归
 function makeReferenceSidebar () {
-  const items = [{ text: '总览', link: '/reference/' }].concat(listPages('reference'))
-  return [
-    {
-      text: '参考与 API',
+  const res = []
+
+  // 根层
+  const root = [{ text: '总览', link: '/reference/' }].concat(listPages('reference'))
+  if (root.length) {
+    res.push({
+      text: '参考与API',
       collapsible: true,
       collapsed: false,
-      children: items,
-    },
-  ]
+      children: root,
+    })
+  }
+
+  const refRoot = path.resolve(DOCS_ROOT, 'reference')
+  if (!fs.existsSync(refRoot)) return res
+
+  const firstLevel = fs.readdirSync(refRoot).filter(d => {
+    const p = path.join(refRoot, d)
+    return fs.statSync(p).isDirectory()
+  }).sort((a, b) => a.localeCompare(b, 'zh-Hans-CN'))
+
+  for (const d of firstLevel) {
+    const rel = path.posix.join('reference', d)
+    const children = []
+    // 该组的直接 md（含 README 可选）
+    const top = listPages(rel, { includeReadme: true })
+    if (top.length) children.push(...top)
+    // 递归其子树
+    const tree = listMdTree(rel)
+    if (tree.length) children.push(...tree)
+
+    if (children.length) {
+      res.push({
+        text: d, 
+        collapsible: true,
+        collapsed: true,
+        children,
+      })
+    }
+  }
+
+  return res
 }
 
 function makeGuideHomeSidebar (modules) {
@@ -231,15 +267,16 @@ export default defineUserConfig({
   theme: defaultTheme({
     navbar: [
       { text: '指南', link: '/guide/' },
-      { text: '参考', link: '/reference/' },
-      { text: 'HoloLens2Medical', link: 'https://github.com/Fantastic2020/HoloLens2Medical' },
+      { text: 'API', link: '/reference/' },
+      { text: 'HoloLens2Medical', link: 'https://github.com/Fantastic2020/HoloLens2Medical' }, // TODO: 如需修改
     ],
-    repo: '101AoiKoori/HoloLens2Medical-Technical-Documentation_VuePress',
+    repo: '101AoiKoori/HoloLens2Medical-Technical-Documentation_VuePress', // TODO: 如需修改
     docsDir: 'docs',
     editLink: true,
     lastUpdated: false,
     editLinkText: '在 GitHub 上编辑此页',
     contributors: false,
+
     sidebar: buildSidebarMapping(MODULES),
   }),
 })
