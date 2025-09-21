@@ -230,7 +230,7 @@ function makeGuideHomeSidebar (modules) {
       collapsed: false,
       children: [
         { text: '简介', link: '/guide/' },
-        { text: '工程搭建', link: '/guide/setup/' },
+        { text: '工程搭建', link: '/guide/00setup/' },
       ],
     },
     {

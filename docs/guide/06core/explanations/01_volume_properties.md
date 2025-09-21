@@ -34,4 +34,4 @@ title: 体积属性与元数据解析
 
 ## 进一步阅读
 
-查看如何文档 [设置体积属性](/guide/core/how_to/01_set_volume_properties.md)，了解在 Unity 中如何通过简单脚本应用这些参数。
+查看如何文档 [设置体积属性](/guide/06core/how_to/01_set_volume_properties.md)，了解在 Unity 中如何通过简单脚本应用这些参数。

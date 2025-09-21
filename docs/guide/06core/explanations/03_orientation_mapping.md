@@ -48,4 +48,4 @@ DICOM 标准规定 `ImageOrientationPatient` 包含 6 个浮点数：前 3 个�
 
 ## 进一步阅读
 
-请参考如何文档 [坐标映射示例](/guide/core/how_to/03_coordinate_mapping_examples.md) 了解如何在代码中调用这些方法，并观察它们在真实场景中的作用。
+请参考如何文档 [坐标映射示例](/guide/06core/how_to/03_coordinate_mapping_examples.md) 了解如何在代码中调用这些方法，并观察它们在真实场景中的作用。

@@ -67,4 +67,4 @@ public DicomSlice(DicomDataset dataset, string filePath, byte[] pixelData = null
 
 ## 进一步阅读
 
-请参考如何文档 [从切片创建纹理](/guide/core/how_to/04_create_texture_from_slice.md)，了解如何在 Unity 中使用这些方法将切片显示在 UI 元素上，并根据需要调整窗位和窗宽。
+请参考如何文档 [从切片创建纹理](/guide/06core/how_to/04_create_texture_from_slice.md)，了解如何在 Unity 中使用这些方法将切片显示在 UI 元素上，并根据需要调整窗位和窗宽。
