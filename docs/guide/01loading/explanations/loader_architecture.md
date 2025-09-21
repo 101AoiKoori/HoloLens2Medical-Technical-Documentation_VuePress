@@ -23,3 +23,9 @@ Loading 模块由以下子功能组成：
 4. **结果整理**：全部切片加载完成后，检查是否至少加载了一张切片；如果没有则视为失败。否则，对切片列表进行排序并设置体积属性。
 5. **验证与结束**：调用 `ValidateLoadedSeries()` 检查所有切片尺寸是否一致。验证通过则触发完成事件，否则触发失败事件。
 6. **清理与取消**：在任何阶段，调用 `StopLoading()` 可以取消加载并释放资源。
+
+## 基类继承结构
+DicomSeriesLoader 继承自 DicomLoader 抽象基类，获得：
+- 统一的事件接口（OnLoadingComplete, OnLoadingFailed, OnLoadingStatusChanged）
+- 基础的状态管理（isLoading, loadingProgress, loadingStatus）
+- 抽象方法约束（StartLoading, StopLoading）

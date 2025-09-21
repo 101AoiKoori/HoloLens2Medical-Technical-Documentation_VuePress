@@ -30,6 +30,16 @@ Loading 模块围绕以下核心类与功能展开：
 
 * **日志与状态子模块**
   封装了统一的 `LogMessage` 输出，结合进度更新方法 `UpdateProgress`，在加载过程中不断通知外部 UI。
+  
+## 实现思路 
+* DicomSeriesLoader使用部分类（partial class）的设计模式。
+- DicomSeriesLoader 主类：协调和对外接口
+- DicomSeriesLoader.Indexing：索引文件处理
+- DicomSeriesLoader.FileIO：文件读取功能
+- DicomSeriesLoader.Loader：核心加载协程
+- DicomSeriesLoader.PixelData：像素数据提取
+- DicomSeriesLoader.Validation：数据验证
+- DicomSeriesLoader.Status：状态管理和日志
 
 ## 与其他模块的关系
 
@@ -44,20 +54,22 @@ Loading 模块围绕以下核心类与功能展开：
 
 ### Explanations 设计原理与实现思路
 
-* [加载器架构与事件机制](./explanations/loading/01_loader_architecture.html)
-* [批量加载流程](./explanations/loading/02_series_loader_flow.html)
-* [索引文件处理机制](./explanations/loading/03_index_file.html)
-* [文件读取方式](./explanations/loading/04_file_reading.html)
-* [像素数据提取机制](./explanations/loading/05_pixel_data.html)
-* [状态与进度同步](./explanations/loading/06_progress_update.html)
-* [验证与体积信息推导](./explanations/loading/07_volume_validation.html)
+* [文件读取与路径解析](./explanations/file_io.html)
+* [JSON 索引文件处理机制](./explanations/index_file.html)
+* [Loading 模块架构与流程概览](./explanations/loader_architecture.html)
+* [DICOM 序列加载流程](./explanations/loading_process.html)
+* [像素数据提取原理](./explanations/pixel_data.html)
+* [进度更新、事件与日志机制](./explanations/progress_and_logging.html)
+* [数据验证与体积信息推导](./explanations/validation_and_volume.html)
 
 ### implementation 按功能划分的最小实现示例
 
-* [使用 DicomSeriesLoader 加载序列并监听事件](./implementation/loading/01_use_seriesloader.html)
-* [配置或生成 JSON 索引文件](./implementation/loading/02_configure_index.html)
-* [获取加载结果中的体积信息](./implementation/loading/03_get_volume_info.html)
-* [处理加载失败并输出错误日志](./implementation/loading/04_handle_errors.html)
+* [基本DICOM序列加载](./implementation/01_basic_loading.md.html)
+* [进度监控与状态显示](./implementation/02_progress_monitoring.html)
+* [索引文件管理](./implementation/03_index_file_management.html)
+* [错误处理与异常管理](./implementation/04_error_handling.html)
+* [绝对路径加载](./implementation/05_absolute_path_loading.html)
+* [体积数据访问与使用](./implementation/06_volume_data_access.html)
 
 >建议首先阅读 **explanations** 下的原理文档，理解加载流程如何分层实现；随后在 **implementation** 中运行最小示例，验证 DICOM 数据能否在 Unity 场景中被正确加载。
 ---

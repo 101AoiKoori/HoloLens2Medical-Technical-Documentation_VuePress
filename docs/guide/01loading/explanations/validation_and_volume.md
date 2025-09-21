@@ -18,6 +18,15 @@
    - 原点使用 `ImagePosition`。
    - 将这些属性传递给 `DicomSeries.SetVolumeProperties()`，加载器会在日志中输出结果。
 
+## 像素数据长度验证
+验证算法检查实际帧大小是否匹配预期：
+```csharp
+int expectedSize = px.Width * px.Height * bitsAllocated / 8;
+if (px.GetFrame(0).Size != expectedSize) {
+    // 数据长度不匹配，可能文件损坏
+    return false;
+}
+```
 ## 使用建议
 
 - 如果应用中某些切片的尺寸不一致，应先在工具链中裁剪或重采样它们，确保统一的体积几何。
