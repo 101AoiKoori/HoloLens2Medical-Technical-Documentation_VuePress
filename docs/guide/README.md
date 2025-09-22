@@ -1,3 +1,6 @@
+---
+title: 简介
+---
 # 简介
 
 欢迎来到 **HoloLens2Medical 教程**。
@@ -5,7 +8,7 @@
 
 ## 你将学到什么
 
-通过本教程，你将逐步掌握：
+通过本教程，你将逐步掌握:
 
 * 如何配置 Unity 和 Visual Studio 以支持 HoloLens 2 开发
 * 如何组织工程文件夹和命名空间
@@ -14,7 +17,7 @@
 
 ## 环境配置
 
-在开始之前，请确保你已经具备：
+在开始之前，请确保你已经具备:
 * **Windows 10/11**
 * 安装了 **Unity 2022.3.55f1c1** 与 **Visual Studio 2022**
 * 下载了[NuGetForUnity](https://github.com/GlitchEnzo/NuGetForUnity)、[混合现实工具包](https://learn.microsoft.com/en-us/windows/mixed-reality/develop/unity/welcome-to-mr-feature-tool)、[MRTK.HoloLens2.Unity.Tutorials.Assets.GettingStarted.3.0.0.unitypackage](https://github.com/microsoft/MixedRealityLearning/releases/download/getting-started-v3.0.0/MRTK.HoloLens2.Unity.Tutorials.Assets.GettingStarted.3.0.0.unitypackage)

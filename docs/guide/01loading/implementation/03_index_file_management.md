@@ -1,10 +1,13 @@
+---
+title: 索引文件管理
+---
 # 索引文件管理
 
 索引文件是Loading模块的关键组件，用于指定加载哪些DICOM文件以及加载顺序。本文介绍索引文件的创建、管理和使用方法。
 
 ## 索引文件命名规则
 
-根据`GetIndexFileName()`方法的实现，索引文件命名遵循以下规则：
+根据`GetIndexFileName()`方法的实现，索引文件命名遵循以下规则:
 
 ```csharp
 // 如果文件夹路径是"DICOM"
@@ -18,7 +21,7 @@ string indexFileName = "ct_series_index.json"; // 转换为小写
 
 ### 1. 基本JSON格式
 
-在`StreamingAssets`目录下创建索引文件：
+在`StreamingAssets`目录下创建索引文件:
 
 ```json
 {
@@ -32,7 +35,7 @@ string indexFileName = "ct_series_index.json"; // 转换为小写
 
 ### 2. 不同目录结构的索引
 
-如果DICOM文件分布在子目录中：
+如果DICOM文件分布在子目录中:
 
 ```json
 {
@@ -46,7 +49,7 @@ string indexFileName = "ct_series_index.json"; // 转换为小写
 
 ### 3. 自定义加载顺序
 
-索引文件中的顺序即为加载顺序，可以手动调整：
+索引文件中的顺序即为加载顺序，可以手动调整:
 
 ```json
 {
@@ -62,7 +65,7 @@ string indexFileName = "ct_series_index.json"; // 转换为小写
 
 ### 1. 生成条件
 
-当满足以下条件时，系统会自动生成索引：
+当满足以下条件时，系统会自动生成索引:
 - 索引文件不存在
 - 使用相对路径模式 (`useAbsolutePath = false`)
 - StreamingAssets目录下存在对应的DICOM文件夹
@@ -94,7 +97,7 @@ private void GenerateIndexExample()
 
 ### 3. 生成示例
 
-对于包含以下文件的目录：
+对于包含以下文件的目录:
 ```
 StreamingAssets/DICOM/
 ├── image001.dcm
@@ -103,7 +106,7 @@ StreamingAssets/DICOM/
 └── image001.dcm.meta (Unity元文件，会被忽略)
 ```
 
-自动生成的索引文件：
+自动生成的索引文件:
 ```json
 {
   "slices": [
@@ -136,7 +139,7 @@ public class AbsolutePathExample : MonoBehaviour
 
 ### 2. 绝对路径索引文件
 
-将索引文件放在同一绝对目录下：
+将索引文件放在同一绝对目录下:
 
 ```
 C:\MedicalData\Patient001\
@@ -146,7 +149,7 @@ C:\MedicalData\Patient001\
 └── slice003.dcm
 ```
 
-索引文件内容使用相对于该目录的路径：
+索引文件内容使用相对于该目录的路径:
 ```json
 {
   "slices": [
@@ -201,7 +204,7 @@ public class IndexValidator : MonoBehaviour
 
 ### 2. UTF-8 BOM处理
 
-代码会自动处理UTF-8 BOM字符：
+代码会自动处理UTF-8 BOM字符:
 
 ```csharp
 // 在LoadIndexFileCoroutine中的处理逻辑

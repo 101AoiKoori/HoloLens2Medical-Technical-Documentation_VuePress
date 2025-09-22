@@ -1,8 +1,10 @@
+---
+title: JSON 索引文件处理机制
+---
 # JSON 索引文件处理机制
-
 ## 功能思路
 
-为了避免在运行时递归扫描大型目录，加载器采用一个简单的 JSON 文件作为索引。索引文件列出了需要加载的切片文件路径，格式如：
+为了避免在运行时递归扫描大型目录，加载器采用一个简单的 JSON 文件作为索引。索引文件列出了需要加载的切片文件路径，格式如:
 
 ```json
 {
@@ -13,13 +15,13 @@
 }
 ```
 
-加载器根据 `dicomFolderPath` 自动推断索引文件名：如果路径是默认的 `DICOM`，文件名为 `dicom_index.json`，否则为 `<目录名>_index.json`。在绝对路径模式下，会将索引文件与数据放在同一目录。
+加载器根据 `dicomFolderPath` 自动推断索引文件名:如果路径是默认的 `DICOM`，文件名为 `dicom_index.json`，否则为 `<目录名>_index.json`。在绝对路径模式下，会将索引文件与数据放在同一目录。
 
 ## 原理拆解
 
-1. **读取索引**：`LoadIndexFileCoroutine()` 根据设置的路径构造完整的索引文件 URI，然后使用 `ReadFileTextCoroutine()` 异步读取内容。读取成功后，去除可能存在的 UTF‑8 BOM 并调用 `JSONIndexParser.Parse()` 将 JSON 转换为路径列表。
-2. **自动生成**：如果索引文件不存在或内容为空，加载器会扫描 `StreamingAssets/dicomFolderPath` 目录下的所有文件，排除 `.meta` 文件，并将文件名写入一个新的索引文件。生成后再次读取以确保解析成功。自动生成仅在相对路径模式下生效；在绝对路径模式下需要用户自行提供索引。
-3. **错误处理**：索引缺失、读取失败或解析为空都会导致 `dicomFilePaths` 为 null，这会在加载阶段触发失败。
+1. **读取索引**:`LoadIndexFileCoroutine()` 根据设置的路径构造完整的索引文件 URI，然后使用 `ReadFileTextCoroutine()` 异步读取内容。读取成功后，去除可能存在的 UTF‑8 BOM 并调用 `JSONIndexParser.Parse()` 将 JSON 转换为路径列表。
+2. **自动生成**:如果索引文件不存在或内容为空，加载器会扫描 `StreamingAssets/dicomFolderPath` 目录下的所有文件，排除 `.meta` 文件，并将文件名写入一个新的索引文件。生成后再次读取以确保解析成功。自动生成仅在相对路径模式下生效；在绝对路径模式下需要用户自行提供索引。
+3. **错误处理**:索引缺失、读取失败或解析为空都会导致 `dicomFilePaths` 为 null，这会在加载阶段触发失败。
 
 ## 使用建议
 

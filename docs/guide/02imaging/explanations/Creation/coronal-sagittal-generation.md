@@ -1,13 +1,16 @@
+---
+title: 冠状和矢状纹理生成 
+---
 # 冠状和矢状纹理生成 
 
-与轴向切片不同，冠状和矢状切片需要在三维体素中重新采样像素。`DicomTextureCreator` 提供两种路径：
+与轴向切片不同，冠状和矢状切片需要在三维体素中重新采样像素。`DicomTextureCreator` 提供两种路径:
 
-* **快速路径**：当体素缓存 (`_cachedVolumeData`) 已存在且包含当前窗宽窗位应用后的灰阶值时，直接调用 `ExtractCoronalTextureFromVolume()` 或 `ExtractSagittalTextureFromVolume()` 批量复制像素。此方法利用坐标映射预先计算好的索引，提高生成速度。
-* **回退路径**：如果体素缓存尚未构建或缓存失败，回退到逐像素算法 (`FallbackCreateCoronalTexture`/`FallbackCreateSagittalTexture`)。回退算法会按列遍历轴向切片，从每个切片的 `Texture2D` 中读取像素并组合为一个新纹理。该方法较慢，但保证在任何情况下都能生成纹理。
+* **快速路径**:当体素缓存 (`_cachedVolumeData`) 已存在且包含当前窗宽窗位应用后的灰阶值时，直接调用 `ExtractCoronalTextureFromVolume()` 或 `ExtractSagittalTextureFromVolume()` 批量复制像素。此方法利用坐标映射预先计算好的索引，提高生成速度。
+* **回退路径**:如果体素缓存尚未构建或缓存失败，回退到逐像素算法 (`FallbackCreateCoronalTexture`/`FallbackCreateSagittalTexture`)。回退算法会按列遍历轴向切片，从每个切片的 `Texture2D` 中读取像素并组合为一个新纹理。该方法较慢，但保证在任何情况下都能生成纹理。
 
 ## 生成流程
 
-以 `CreateCoronalTexture(yIndex, center, width)` 为例：
+以 `CreateCoronalTexture(yIndex, center, width)` 为例:
 
 1. 验证索引有效性。
 2. 生成缓存键并检查 `DicomTextureCache` 是否存在。

@@ -8,7 +8,7 @@ title: 纹理同步与转换
 
 ## 定义
 
-纹理同步涉及以下关键部分：
+纹理同步涉及以下关键部分:
 
 | 名称 | 描述 |
 |----|----|
@@ -19,7 +19,7 @@ title: 纹理同步与转换
 | **enableLogging** | 开启调试信息输出。 |
 | **OnSliceChanged / OnDicomLoaded / OnWindowLevelChanged** | MPRViewer 触发的事件，桥接器会在这些事件发生时更新纹理。 |
 
-转换流程大致如下：
+转换流程大致如下:
 
 1. 使用反射从 `mprViewer` 获取 `axialImage`、`sagittalImage` 和 `coronalImage` 三个私有 `RawImage` 字段。
 2. 在切片变化时获取其 `RawImage.texture`，通常是一个 `RenderTexture`。
@@ -37,7 +37,7 @@ title: 纹理同步与转换
 
 ## 使用示例
 
-以下示例展示了如何配置桥接器并在窗宽窗位变化时刷新纹理：
+以下示例展示了如何配置桥接器并在窗宽窗位变化时刷新纹理:
 
 ```csharp
 // 配置桥接器

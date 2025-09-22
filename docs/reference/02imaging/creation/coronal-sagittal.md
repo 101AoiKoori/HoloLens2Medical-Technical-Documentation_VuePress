@@ -10,14 +10,14 @@ title: 生成冠状与矢状纹理
 
 `IEnumerator CreateCoronalTextureCoroutine(int index)`
 
-生成指定索引的冠状纹理。方法内部流程：
+生成指定索引的冠状纹理。方法内部流程:
 
 1. 尝试从缓存中查找该切片的纹理。
 2. 如果 `_cachedVolumeData` 已准备好，则直接从体数据中抽取第 `index` 层的所有像素。
-3. 如果体数据未准备，则回退到逐像素读取：从对应的轴向纹理中按列复制像素。
+3. 如果体数据未准备，则回退到逐像素读取:从对应的轴向纹理中按列复制像素。
 4. 生成纹理后，将其加入缓存，并通过 `OnTextureUpdated` 事件传递给 UI。
 
-调用示例：
+调用示例:
 
 ```csharp
 StartCoroutine(creator.CreateCoronalTextureCoroutine(coronalIndex));

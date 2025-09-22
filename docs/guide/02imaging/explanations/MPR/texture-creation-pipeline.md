@@ -1,3 +1,6 @@
+---
+title: 纹理创建流水线 
+---
 # 纹理创建流水线 
 
 当调用 `GetTexture()` 且缓存未命中时，MPR 管理器会根据请求的平面类型选择不同的生成方式。
@@ -11,7 +14,7 @@
 
 * 矢状和冠状纹理创建涉及重新采样，需要在协程中异步执行以避免阻塞主线程。
 * `ProcessQueueCoroutine` 会启动 `CreateTextureCoroutine(request)` 来处理单个请求。
-* `CreateTextureInternalCoroutine` 根据平面类型选择同步或异步生成：
+* `CreateTextureInternalCoroutine` 根据平面类型选择同步或异步生成:
   * 轴向面直接调用 `CreateAxialTextureSafe`。
   * 矢状面调用 `_dicomSeries.CreateSagittalTextureCoroutine` 并提供回调。
   * 冠状面调用 `_dicomSeries.CreateCoronalTextureCoroutine`。

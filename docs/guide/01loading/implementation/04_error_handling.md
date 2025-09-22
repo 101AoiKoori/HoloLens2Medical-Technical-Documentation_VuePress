@@ -1,3 +1,6 @@
+---
+title: 错误处理与异常管理
+---
 # 错误处理与异常管理
 
 Loading模块需要处理多种类型的错误，包括文件读取失败、DICOM解析错误、像素数据提取失败等。本文介绍完整的错误处理策略。
@@ -83,7 +86,7 @@ public class FileLoadingErrorHandler : MonoBehaviour
             var parts = message.Split(' ');
             int.TryParse(parts[3], out totalFiles);
         }
-        else if (message.Contains("加载失败：无法读取文件"))
+        else if (message.Contains("加载失败:无法读取文件"))
         {
             failedFiles++;
             
@@ -137,7 +140,7 @@ public class FileLoadingErrorHandler : MonoBehaviour
             // 如果失败率过高，显示警告
             if (successRate < 80f)
             {
-                ShowUI("警告：文件失败率过高，请检查DICOM数据质量");
+                ShowUI("警告:文件失败率过高，请检查DICOM数据质量");
             }
         }
     }
@@ -159,14 +162,14 @@ public class ValidationErrorHandler : MonoBehaviour
     {
         if (message.Contains("像素数据长度不匹配"))
         {
-            Debug.LogError("检测到像素数据长度不匹配，可能的原因：");
+            Debug.LogError("检测到像素数据长度不匹配，可能的原因:");
             Debug.LogError("1. DICOM文件损坏");
             Debug.LogError("2. 压缩格式不支持");
             Debug.LogError("3. 位深设置错误");
             
             ShowUI("建议使用DICOM验证工具检查文件完整性");
         }
-        else if (message.Contains("警告：检测到不一致的切片尺寸"))
+        else if (message.Contains("警告:检测到不一致的切片尺寸"))
         {
             Debug.LogError("切片尺寸不一致，这会导致体积重建失败");
             Debug.LogError("需要对DICOM数据进行预处理，确保所有切片具有相同的分辨率");
@@ -513,7 +516,7 @@ public class ErrorPreventionTips : MonoBehaviour
 }
 ```
 
-通过这些完整的错误处理机制，Loading模块能够：
+通过这些完整的错误处理机制，Loading模块能够:
 
 1. **预防错误**: 在加载前进行预检查
 2. **捕获异常**: 在各个阶段捕获不同类型的错误

@@ -10,7 +10,7 @@ MPR 管理器需要在全局范围内维护窗宽窗位，以便生成的纹理�
 
 `void SetWindowLevel(float center, float width)`
 
-更新全局的窗位和窗宽。如果新值不同于当前值，则会执行以下操作：
+更新全局的窗位和窗宽。如果新值不同于当前值，则会执行以下操作:
 
 1. 更新内部 `_currentWindowCenter` 和 `_currentWindowWidth`。
 2. 调用 `DicomTextureCache.SetCurrentWindowLevelKey()` 更新当前窗宽窗位键。

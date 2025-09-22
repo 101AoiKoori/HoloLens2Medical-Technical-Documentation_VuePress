@@ -1,3 +1,6 @@
+---
+title: 内存监控与生命周期 
+---
 # 内存监控与生命周期 
 
 MPR 管理器通过定时检查系统内存压力并执行资源释放，保证应用在内存紧张的设备上稳定运行。
@@ -14,9 +17,9 @@ MPR 管理器通过定时检查系统内存压力并执行资源释放，保证�
 
 ## 生命周期方法
 
-* **Awake/Initialize**：创建 `DicomTextureCache` 实例并设置缓存上限。
-* **OnEnable/OnDisable**：启用或停用 MPR 管理器，分别设置 `_isShuttingDown` 标志。
-* **OnDestroy**：停止所有协程，清空请求队列，释放缓存并解除事件订阅。
+* **Awake/Initialize**:创建 `DicomTextureCache` 实例并设置缓存上限。
+* **OnEnable/OnDisable**:启用或停用 MPR 管理器，分别设置 `_isShuttingDown` 标志。
+* **OnDestroy**:停止所有协程，清空请求队列，释放缓存并解除事件订阅。
 
 ## 建议
 

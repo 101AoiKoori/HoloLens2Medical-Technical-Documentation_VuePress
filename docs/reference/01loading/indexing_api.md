@@ -1,3 +1,6 @@
+---
+title: 索引文件处理 API
+---
 # 索引文件处理 API
 
 ## 定义
@@ -14,7 +17,7 @@
 
 ## 用法
 
-索引加载是 `StartLoading()` 流程的一部分，无需显式调用。如需手动读取索引，可以通过如下方式：
+索引加载是 `StartLoading()` 流程的一部分，无需显式调用。如需手动读取索引，可以通过如下方式:
 
 ```csharp
 IEnumerator ReadDicomIndex()

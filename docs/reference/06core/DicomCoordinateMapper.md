@@ -8,15 +8,15 @@ title: DicomCoordinateMapper API
 
 ## 类定义
 
-下面列出了主要公开方法和属性，内部变量和辅助函数已省略：
+下面列出了主要公开方法和属性，内部变量和辅助函数已省略:
 
 ```csharp
 public class DicomCoordinateMapper
 {
-    // 构造函数：默认初始化为 Identity 方向
+    // 构造函数:默认初始化为 Identity 方向
     public DicomCoordinateMapper();
 
-    // 初始化：设置为默认方向（X→Sagittal，Y→Coronal，Z→Axial）
+    // 初始化:设置为默认方向（X→Sagittal，Y→Coronal，Z→Axial）
     public void Initialize();
 
     // 从 DICOM 数据集解析方向矩阵。如果缺失，则使用默认方向
@@ -58,11 +58,11 @@ public class DicomCoordinateMapper
 
 ## 用法说明
 
-- **初始化方向**：在加载第一张切片后，调用 `InitializeFromDataset(dataset)` 解析 `ImageOrientationPatient` 数据。如果数据集不含此标签，则自动使用默认方向。初始化只需调用一次。
-- **获取轴映射与切片数**：通过 `GetCurrentAxesMapping()` 获取解剖平面与体素轴 (0:x, 1:y, 2:z) 的对应关系；再通过 `GetSagittalDimension(dims)` 等方法得到每个平面的切片数以设置 UI 滑条范围。
-- **索引与坐标转换**：使用 `MapSagittalIndexToVolume()` 或 `MapCoronalIndexToVolume()` 将平面索引映射为体素坐标（`Vector3Int`）。再使用 `GetCoordinatesInPlane(volumeCoord, planeType)` 或 `MapVoxelToAxialPixel()` 将体素坐标转为平面内的像素坐标，用于在纹理上标记位置。
-- **交叉线定位**：当用户在某个平面上拖动鼠标时，可以通过 `MapPlaneCoordToAxialIndex(baseCoord, planeCoord, planeType)` 计算出轴向切片索引，实现多平面联动。
-- **调试信息**：调用 `LogOrientationInfo()` 可在控制台打印当前方向向量、轴映射和符号信息，方便调试不同设备或序列。
+- **初始化方向**:在加载第一张切片后，调用 `InitializeFromDataset(dataset)` 解析 `ImageOrientationPatient` 数据。如果数据集不含此标签，则自动使用默认方向。初始化只需调用一次。
+- **获取轴映射与切片数**:通过 `GetCurrentAxesMapping()` 获取解剖平面与体素轴 (0:x, 1:y, 2:z) 的对应关系；再通过 `GetSagittalDimension(dims)` 等方法得到每个平面的切片数以设置 UI 滑条范围。
+- **索引与坐标转换**:使用 `MapSagittalIndexToVolume()` 或 `MapCoronalIndexToVolume()` 将平面索引映射为体素坐标（`Vector3Int`）。再使用 `GetCoordinatesInPlane(volumeCoord, planeType)` 或 `MapVoxelToAxialPixel()` 将体素坐标转为平面内的像素坐标，用于在纹理上标记位置。
+- **交叉线定位**:当用户在某个平面上拖动鼠标时，可以通过 `MapPlaneCoordToAxialIndex(baseCoord, planeCoord, planeType)` 计算出轴向切片索引，实现多平面联动。
+- **调试信息**:调用 `LogOrientationInfo()` 可在控制台打印当前方向向量、轴映射和符号信息，方便调试不同设备或序列。
 
 ## 使用示例（伪代码）
 
@@ -84,7 +84,7 @@ Vector3Int voxelCoord = mapper.MapSagittalIndexToVolume(sagIdx, dims);
 Vector2Int pixel = mapper.MapVoxelToAxialPixel(voxelCoord);
 DrawCrosshair(pixel);
 
-// 反向映射：用户在矢状平面点击图片
+// 反向映射:用户在矢状平面点击图片
 Vector2Int sagPlaneCoord = new Vector2Int(xInSagittalImage, yInSagittalImage);
 int axialIndex = mapper.MapPlaneCoordToAxialIndex(voxelCoord, sagPlaneCoord, DicomPlane.PlaneType.Sagittal);
 

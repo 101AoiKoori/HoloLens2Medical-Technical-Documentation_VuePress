@@ -59,24 +59,24 @@ public class DicomSeries : MonoBehaviour
 }
 ```
 
-> **注意：** 此类内部引用了 `DicomTextureCache` 和 `DicomTextureCreator` 等组件，这些位于 Imaging 模块，用于实际创建纹理和缓存结果。本文档只描述 Core 提供的接口。若需要了解纹理生成细节，请查阅 Imaging 模块的 API 文档。
+> **注意:** 此类内部引用了 `DicomTextureCache` 和 `DicomTextureCreator` 等组件，这些位于 Imaging 模块，用于实际创建纹理和缓存结果。本文档只描述 Core 提供的接口。若需要了解纹理生成细节，请查阅 Imaging 模块的 API 文档。
 
 ## 用法说明
 
-1. **初始化几何信息**：调用 `SetVolumeProperties()` 在序列加载前指定体素网格的大小、体素间距、起点和旋转。此操作将更新内部的 `DicomMetadata`。
+1. **初始化几何信息**:调用 `SetVolumeProperties()` 在序列加载前指定体素网格的大小、体素间距、起点和旋转。此操作将更新内部的 `DicomMetadata`。
 
-2. **添加切片**：在读取每个 DICOM 文件后，将其转换为 `DicomSlice` 并调用 `AddSlice()` 添加。若添加的是第一张切片，并且数据集中包含 `ImageOrientationPatient` 标签，则 `_coordinateMapper` 会自动根据该标签初始化方向。
+2. **添加切片**:在读取每个 DICOM 文件后，将其转换为 `DicomSlice` 并调用 `AddSlice()` 添加。若添加的是第一张切片，并且数据集中包含 `ImageOrientationPatient` 标签，则 `_coordinateMapper` 会自动根据该标签初始化方向。
 
-3. **排序切片**：加载完所有切片后，调用 `SortSlices()` 排序。这会确保 `GetSlice(index)` 返回的顺序符合解剖学的自然顺序。
+3. **排序切片**:加载完所有切片后，调用 `SortSlices()` 排序。这会确保 `GetSlice(index)` 返回的顺序符合解剖学的自然顺序。
 
-4. **获取切片纹理**：
-   - **轴向**：调用 `GetAxialTexture()` 直接获取指定索引的轴向纹理。若传入 `windowCenter` 或 `windowWidth`，则使用自定义窗位/窗宽；否则使用默认值。
-   - **矢状/冠状 (同步)**：调用 `CreateSagittalTexture(xIndex)` 或 `CreateCoronalTexture(yIndex)` 创建新纹理。这些方法会立即返回，不带有回调。
-   - **矢状/冠状 (异步)**：在 UI 线程不宜阻塞时使用协程版本。使用 `StartCoroutine(series.CreateSagittalTextureCoroutine(...))`，完成后通过回调 `onComplete` 获得纹理。
+4. **获取切片纹理**:
+   - **轴向**:调用 `GetAxialTexture()` 直接获取指定索引的轴向纹理。若传入 `windowCenter` 或 `windowWidth`，则使用自定义窗位/窗宽；否则使用默认值。
+   - **矢状/冠状 (同步)**:调用 `CreateSagittalTexture(xIndex)` 或 `CreateCoronalTexture(yIndex)` 创建新纹理。这些方法会立即返回，不带有回调。
+   - **矢状/冠状 (异步)**:在 UI 线程不宜阻塞时使用协程版本。使用 `StartCoroutine(series.CreateSagittalTextureCoroutine(...))`，完成后通过回调 `onComplete` 获得纹理。
 
-5. **获取切片数量**：使用 `GetSagittalDimension()` 和 `GetCoronalDimension()` 可查询对应平面有多少张切片，这通常用于设置 UI 滑条的最大值。
+5. **获取切片数量**:使用 `GetSagittalDimension()` 和 `GetCoronalDimension()` 可查询对应平面有多少张切片，这通常用于设置 UI 滑条的最大值。
 
-6. **释放资源**：调用 `ReleaseResources()` 将释放所有切片的纹理、清空缓存并提示垃圾回收。应在切换序列或卸载场景时调用。
+6. **释放资源**:调用 `ReleaseResources()` 将释放所有切片的纹理、清空缓存并提示垃圾回收。应在切换序列或卸载场景时调用。
 
 ## 使用示例（伪代码）
 

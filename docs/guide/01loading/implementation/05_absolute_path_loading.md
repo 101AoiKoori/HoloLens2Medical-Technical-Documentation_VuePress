@@ -1,3 +1,6 @@
+---
+title: 绝对路径加载
+---
 # 绝对路径加载
 
 当DICOM数据不在Unity的StreamingAssets目录中时，可以使用绝对路径模式从外部目录加载数据。这在处理大型数据集或用户选择的数据时特别有用。
@@ -46,7 +49,7 @@ public class AbsolutePathLoader : MonoBehaviour
 
 ### 2. 路径格式处理
 
-根据`GetFullPath()`方法的实现，系统会自动处理不同的路径格式：
+根据`GetFullPath()`方法的实现，系统会自动处理不同的路径格式:
 
 ```csharp
 public class PathFormatExample : MonoBehaviour
@@ -56,7 +59,7 @@ public class PathFormatExample : MonoBehaviour
         var loader = GetComponent<DicomSeriesLoader>();
         loader.useAbsolutePath = true;
         
-        // 这些路径格式都会被正确处理：
+        // 这些路径格式都会被正确处理:
         
         // Windows风格路径
         loader.dicomFolderPath = @"C:\MedicalData\Series1";
@@ -189,7 +192,7 @@ public class CrossPlatformFileSelector : MonoBehaviour
 
 ### 1. 自动创建索引文件
 
-绝对路径模式下不会自动生成索引，需要手动创建：
+绝对路径模式下不会自动生成索引，需要手动创建:
 
 ```csharp
 public class AbsolutePathIndexCreator : MonoBehaviour
@@ -453,7 +456,7 @@ public class NetworkPathLoader : MonoBehaviour
 }
 ```
 
-绝对路径模式为Loading模块提供了灵活的数据源访问能力，特别适用于：
+绝对路径模式为Loading模块提供了灵活的数据源访问能力，特别适用于:
 
 1. **大型数据集**: 不受StreamingAssets限制
 2. **用户选择**: 支持动态选择数据目录  
