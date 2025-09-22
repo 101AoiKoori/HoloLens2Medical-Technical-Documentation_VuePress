@@ -1,3 +1,6 @@
+---
+title: 像素数据提取 API
+---
 # 像素数据提取 API
 
 ## 定义
@@ -7,7 +10,7 @@
 
 ## 用法
 
-该方法为私有内部工具，通常在 `LoadSeriesCoroutine` 中使用。自定义加载器可以参考以下伪代码：
+该方法为私有内部工具，通常在 `LoadSeriesCoroutine` 中使用。自定义加载器可以参考以下伪代码:
 
 ```csharp
 byte[] pixelBytes = ExtractPixelData(dataset);

@@ -8,12 +8,12 @@ title: 多平面管理器使用
 
 ## 定义与职责
 
-`DicomSlice3DManager` 负责：
+`DicomSlice3DManager` 负责:
 
-1. **加载数据**：通过 `DicomSeriesLoader` 或直接设置 `dicomSeries`，在数据准备好后初始化切片平面。
-2. **创建平面**：根据 `autoCreatePlanes` 设置创建或绑定轴向、矢状和冠状平面的容器，并添加 `DicomPlaneController`。
-3. **统一控制**：提供方法一次调整三个平面的大小、透明度、窗宽窗位和切片索引。
-4. **事件传递**：在任意平面的切片索引变化时触发 `OnSliceChanged` 事件，并在需要时同步到 2D MPRViewer。
+1. **加载数据**:通过 `DicomSeriesLoader` 或直接设置 `dicomSeries`，在数据准备好后初始化切片平面。
+2. **创建平面**:根据 `autoCreatePlanes` 设置创建或绑定轴向、矢状和冠状平面的容器，并添加 `DicomPlaneController`。
+3. **统一控制**:提供方法一次调整三个平面的大小、透明度、窗宽窗位和切片索引。
+4. **事件传递**:在任意平面的切片索引变化时触发 `OnSliceChanged` 事件，并在需要时同步到 2D MPRViewer。
 
 ## 核心方法
 
@@ -40,7 +40,7 @@ title: 多平面管理器使用
 
 ## 使用示例
 
-下面示例展示了如何创建管理器并绑定数据源：
+下面示例展示了如何创建管理器并绑定数据源:
 
 ```csharp
 // 创建管理器

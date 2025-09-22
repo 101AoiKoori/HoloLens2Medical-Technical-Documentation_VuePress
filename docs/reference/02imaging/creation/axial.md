@@ -10,7 +10,7 @@ title: 生成轴向纹理
 
 `Texture2D GetAxialTexture(int index)`
 
-同步返回序列中第 `index` 个轴向切片的纹理。具体流程如下：
+同步返回序列中第 `index` 个轴向切片的纹理。具体流程如下:
 
 1. 尝试从 `DicomTextureCache` 中获取该切片的纹理，如果存在则直接返回。
 2. 如果缓存不存在，则调用 `DicomSlice.CreateTexture()` 读取切片数据、应用窗宽窗位并生成 `Texture2D`。

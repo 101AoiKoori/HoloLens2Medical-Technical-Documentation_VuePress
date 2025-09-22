@@ -1,10 +1,13 @@
+---
+title: 进度监控与状态显示
+---
 # 进度监控与状态显示
 
 详细介绍如何监控DICOM加载进度并在UI中显示状态信息。
 
 ## 进度事件监听
 
-`DicomSeriesLoader`通过`OnLoadingStatusChanged`事件实时报告加载进度：
+`DicomSeriesLoader`通过`OnLoadingStatusChanged`事件实时报告加载进度:
 
 ```csharp
 using UnityEngine;
@@ -108,7 +111,7 @@ public class LoadingProgressMonitor : MonoBehaviour
 
 ## 加载阶段说明
 
-根据实际代码，加载过程分为以下几个主要阶段：
+根据实际代码，加载过程分为以下几个主要阶段:
 
 ### 阶段1: 初始化 (0% - 5%)
 - 准备目标DicomSeries
@@ -138,7 +141,7 @@ public class LoadingProgressMonitor : MonoBehaviour
 
 ## 详细日志订阅
 
-启用更详细的日志信息：
+启用更详细的日志信息:
 
 ```csharp
 void Start()
@@ -167,7 +170,7 @@ private void OnLogMessage(string message)
 
 ## 超时检测
 
-虽然基类包含超时机制，但可以添加自定义超时检测：
+虽然基类包含超时机制，但可以添加自定义超时检测:
 
 ```csharp
 private float loadingStartTime;

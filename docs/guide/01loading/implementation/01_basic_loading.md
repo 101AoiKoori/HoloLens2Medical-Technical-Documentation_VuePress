@@ -1,3 +1,6 @@
+---
+title: 基本DICOM序列加载
+---
 # 基本DICOM序列加载
 
 这是Loading模块最基础的使用方式，演示如何在Unity场景中加载一组DICOM文件。
@@ -6,7 +9,7 @@
 
 ### 1. 场景设置
 
-在Unity场景中创建一个空GameObject，命名为`DicomLoader`：
+在Unity场景中创建一个空GameObject，命名为`DicomLoader`:
 
 ```csharp
 // 在Inspector中添加DicomSeriesLoader组件
@@ -16,7 +19,7 @@ DicomSeriesLoader loader = gameObject.AddComponent<DicomSeriesLoader>();
 
 ### 2. 数据准备
 
-将DICOM文件放置在`StreamingAssets/DICOM`目录下：
+将DICOM文件放置在`StreamingAssets/DICOM`目录下:
 
 ```
 Assets/
@@ -29,7 +32,7 @@ Assets/
 
 ## 基本加载代码
 
-创建控制脚本，实现最简单的加载流程：
+创建控制脚本，实现最简单的加载流程:
 
 ```csharp
 using UnityEngine;
@@ -73,7 +76,7 @@ public class BasicLoadingExample : MonoBehaviour
 
 ## 加载器配置
 
-在Inspector面板中配置`DicomSeriesLoader`组件的参数：
+在Inspector面板中配置`DicomSeriesLoader`组件的参数:
 
 - **Dicom Folder Path**: `DICOM` (默认值)
 - **Use Absolute Path**: 不勾选 (使用相对路径)
@@ -82,7 +85,7 @@ public class BasicLoadingExample : MonoBehaviour
 
 ## 运行结果
 
-运行场景后，控制台将显示：
+运行场景后，控制台将显示:
 
 ```
 [DicomSeriesLoader] 开始加载DICOM序列（数据集: DICOM）
@@ -95,7 +98,7 @@ public class BasicLoadingExample : MonoBehaviour
 
 ### 索引文件缺失
 
-如果没有`dicom_index.json`文件，加载器会自动扫描目录并生成：
+如果没有`dicom_index.json`文件，加载器会自动扫描目录并生成:
 
 ```json
 {
@@ -108,7 +111,7 @@ public class BasicLoadingExample : MonoBehaviour
 
 ### 加载失败
 
-最常见的失败原因：
+最常见的失败原因:
 - DICOM文件路径错误
 - 文件格式不正确
 - 缺少像素数据

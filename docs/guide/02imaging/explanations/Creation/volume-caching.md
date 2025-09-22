@@ -1,3 +1,6 @@
+---
+title: 体素缓存与窗宽窗位 
+---
 # 体素缓存与窗宽窗位 
 
 为了高效生成冠状和矢状面，Creation 模块将所有轴向切片的像素数据解码到 `_rawVolumeData` 中，并对每个体素应用窗宽窗位后存入 `_cachedVolumeData`。此过程称为“体素缓存”。
@@ -32,8 +35,8 @@ for (int i = 0; i < _rawVolumeData.Length; i++)
 
 ## 清理体素缓存
 
-* `ClearVolumeCache()`：释放 `_cachedVolumeData` 并标记缓存无效，但保留 `_rawVolumeData` 以便重新应用不同的窗宽窗位。
-* `ClearAllCache()`：同时释放 `_rawVolumeData` 和 `_cachedVolumeData`，适用于切换序列或释放大量内存。
+* `ClearVolumeCache()`:释放 `_cachedVolumeData` 并标记缓存无效，但保留 `_rawVolumeData` 以便重新应用不同的窗宽窗位。
+* `ClearAllCache()`:同时释放 `_rawVolumeData` 和 `_cachedVolumeData`，适用于切换序列或释放大量内存。
 
 ## 注意事项
 

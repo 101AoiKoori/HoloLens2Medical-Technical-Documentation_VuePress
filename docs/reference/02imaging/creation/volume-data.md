@@ -4,7 +4,7 @@ title: 体数据缓存
 
 # 体数据缓存
 
-为提高生成冠状和矢状纹理的效率，`DicomTextureCreator` 支持在加载序列后一次性缓存体素数据。缓存机制分两步：
+为提高生成冠状和矢状纹理的效率，`DicomTextureCreator` 支持在加载序列后一次性缓存体素数据。缓存机制分两步:
 
 ## CacheRawVolumeData
 
@@ -18,7 +18,7 @@ title: 体数据缓存
 
 根据当前窗宽窗位，将 `_rawVolumeData` 映射为 `_cachedVolumeData`，数据类型为 `Color32[]`。该数组在内存中按 `depth × rows × cols` 顺序排布，可以直接用于生成纹理。
 
-调用示例：
+调用示例:
 
 ```csharp
 creator.CacheRawVolumeData();  // 只在加载序列时调用一次

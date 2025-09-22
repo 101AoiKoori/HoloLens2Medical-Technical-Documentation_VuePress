@@ -1,27 +1,30 @@
+---
+title: 加载模块 API
+---
 # 加载模块 API
 
 ## 定义
 
 ### LoadDicomData()
 
-- **功能**：启动 DICOM 序列的加载流程。调用此方法后，内部的 Loader 模块会通过挂载在对象上的 `DicomLoader` 或自动添加的 `DicomSeriesLoader` 来异步读取 DICOM 数据。
-- **参数**：无。
-- **返回值**：无（void）。
-- **说明**：如果正在加载或组件正在关闭，重复调用将被忽略并输出警告。
+- **功能**:启动 DICOM 序列的加载流程。调用此方法后，内部的 Loader 模块会通过挂载在对象上的 `DicomLoader` 或自动添加的 `DicomSeriesLoader` 来异步读取 DICOM 数据。
+- **参数**:无。
+- **返回值**:无（void）。
+- **说明**:如果正在加载或组件正在关闭，重复调用将被忽略并输出警告。
 
 ### OnDicomLoaded
 
-- **类型**：事件 (event)。
-- **声明**：`event void DicomLoadedEventHandler(int sliceCount)`。
-- **功能**：当 DICOM 数据加载完成时触发。
-- **参数**：`sliceCount` – 加载后的轴向切片总数。
-- **说明**：订阅此事件以在加载完成后初始化 UI（如设置滑块最大值）、更新逻辑或通知用户。
+- **类型**:事件 (event)。
+- **声明**:`event void DicomLoadedEventHandler(int sliceCount)`。
+- **功能**:当 DICOM 数据加载完成时触发。
+- **参数**:`sliceCount` – 加载后的轴向切片总数。
+- **说明**:订阅此事件以在加载完成后初始化 UI（如设置滑块最大值）、更新逻辑或通知用户。
 
 ### GetLoadedSeries()
 
-- **功能**：返回当前加载的 `DicomSeries` 对象。
-- **返回值**：`DicomSeries` 实例；若尚未加载则返回 `null`。
-- **说明**：可以通过返回的 `DicomSeries` 获取默认窗位窗宽、切片数和其他元数据。
+- **功能**:返回当前加载的 `DicomSeries` 对象。
+- **返回值**:`DicomSeries` 实例；若尚未加载则返回 `null`。
+- **说明**:可以通过返回的 `DicomSeries` 获取默认窗位窗宽、切片数和其他元数据。
 
 ## 用法
 
@@ -47,7 +50,7 @@ viewer.OnDicomLoaded += (int sliceCount) => {
 // 启动加载流程
 viewer.LoadDicomData();
 
-// 可选：在其他逻辑中访问加载后的序列
+// 可选:在其他逻辑中访问加载后的序列
 DicomSeries series = viewer.GetLoadedSeries();
 if (series != null) {
     // 例如获取默认窗位/窗宽

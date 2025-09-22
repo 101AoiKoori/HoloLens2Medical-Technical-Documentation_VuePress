@@ -16,9 +16,9 @@ var cache = new DicomTextureCache();
 cache.SetCacheSize(axialSize: 150, sagittalSize: 100, coronalSize: 100);
 ```
 
-- **axialSize**：轴向切片的最大缓存数。
-- **sagittalSize**：矢状切片的最大缓存数。
-- **coronalSize**：冠状切片的最大缓存数。
+- **axialSize**:轴向切片的最大缓存数。
+- **sagittalSize**:矢状切片的最大缓存数。
+- **coronalSize**:冠状切片的最大缓存数。
 
 内部会根据设定值计算 `_axialCacheMaxSize` 等字段，并将每个缓存槽位对应的内存上限设置为固定倍数。例如，轴向切片的上限是 `512 * 1024L * axialSize` 字节。调用后还会检查现有缓存是否超过新限制并进行收缩。
 
@@ -26,7 +26,7 @@ cache.SetCacheSize(axialSize: 150, sagittalSize: 100, coronalSize: 100);
 
 ### ClearAllCaches()
 
-`ClearAllCaches()` 会删除所有切面的缓存项，但会保留当前正在显示的纹理，防止界面闪烁。内部逻辑如下：
+`ClearAllCaches()` 会删除所有切面的缓存项，但会保留当前正在显示的纹理，防止界面闪烁。内部逻辑如下:
 
 1. 遍历 `_currentDisplayedTextures` 保存当前显示的纹理以及其切面。
 2. 调用内部方法 `ClearCache()` 分别清空轴向、矢状和冠状的缓存，并重置各种统计信息。

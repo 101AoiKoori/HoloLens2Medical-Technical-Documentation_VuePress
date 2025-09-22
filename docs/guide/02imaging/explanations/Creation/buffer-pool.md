@@ -1,11 +1,14 @@
+---
+title: 缓冲区池与性能优化 
+---
 # 缓冲区池与性能优化 
 
 为避免频繁分配和回收大数组，`DicomTextureCreator` 维护一个颜色缓冲区池 `_pixelBufferPool`。
 
 ## 获取与归还缓冲区
 
-* `GetColorBuffer(key, size)`：如果缓冲池中存在足够大的数组，则直接取出；否则创建新数组。
-* `ReturnColorBuffer(key, buffer)`：将数组归还缓冲池。池的大小受 `_maxBuffersInPool` 控制，超过上限时会随机淘汰旧缓冲区。
+* `GetColorBuffer(key, size)`:如果缓冲池中存在足够大的数组，则直接取出；否则创建新数组。
+* `ReturnColorBuffer(key, buffer)`:将数组归还缓冲池。池的大小受 `_maxBuffersInPool` 控制，超过上限时会随机淘汰旧缓冲区。
 
 使用缓冲池有助于减少 GC 产生的卡顿，尤其是在频繁生成矢状/冠状纹理时。
 

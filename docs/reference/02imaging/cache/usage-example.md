@@ -33,4 +33,4 @@ cache.MarkTextureAsVisible(PlaneType.Axial, key);
 // cache.ClearAllCaches();
 ```
 
-此示例展现了缓存模块的典型用法：先配置大小，再在需要时检查缓存、生成纹理、更新状态，最后在切换数据时清理。
+此示例展现了缓存模块的典型用法:先配置大小，再在需要时检查缓存、生成纹理、更新状态，最后在切换数据时清理。

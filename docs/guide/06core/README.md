@@ -8,13 +8,13 @@ Core 模块是整个 **HoloLens2Medical** 项目的基础层，它定义了对�
 
 ## 主要职责
 
-Core 模块围绕几个关键类展开：
+Core 模块围绕几个关键类展开:
 
-- **DicomMetadata**：存储体积的几何信息与显示默认值，包括体素网格尺寸(`Dimensions`)、体素间距(`Spacing`)、原点坐标(`Origin`)、方向四元数(`Orientation`)以及默认窗位和窗宽。该类只是一个数据容器，没有复杂逻辑，但它为解析像素数据提供了统一的几何参照。
-- **DicomSlice**：代表一张 DICOM 图像切片，负责从数据集提取元数据和像素数据，支持按需解码 `PixelData`、缓存窗位/窗宽设置，并创建 Unity `Texture2D`。切片还实现了 `IDisposable`，释放纹理和像素数据以节省内存。
-- **DicomSliceManager**：维护一个切片列表，并提供添加、排序、索引访问和资源释放的操作。它抽象了切片集合的生命周期，使得 `DicomSeries` 更专注于序列级的逻辑。
-- **DicomCoordinateMapper**：通过解析 DICOM 标签 `ImageOrientationPatient` 中的行、列方向向量，推断轴向(Axial)、矢状(Sagittal)和冠状(Coronal)三个解剖平面与体素坐标轴的对应关系，并提供在一维索引、三维体素坐标和二维平面像素坐标之间转换的方法。
-- **DicomPlane**：一个简单的枚举，定义了三种解剖平面类型以及常用的工具函数。
+- **DicomMetadata**:存储体积的几何信息与显示默认值，包括体素网格尺寸(`Dimensions`)、体素间距(`Spacing`)、原点坐标(`Origin`)、方向四元数(`Orientation`)以及默认窗位和窗宽。该类只是一个数据容器，没有复杂逻辑，但它为解析像素数据提供了统一的几何参照。
+- **DicomSlice**:代表一张 DICOM 图像切片，负责从数据集提取元数据和像素数据，支持按需解码 `PixelData`、缓存窗位/窗宽设置，并创建 Unity `Texture2D`。切片还实现了 `IDisposable`，释放纹理和像素数据以节省内存。
+- **DicomSliceManager**:维护一个切片列表，并提供添加、排序、索引访问和资源释放的操作。它抽象了切片集合的生命周期，使得 `DicomSeries` 更专注于序列级的逻辑。
+- **DicomCoordinateMapper**:通过解析 DICOM 标签 `ImageOrientationPatient` 中的行、列方向向量，推断轴向(Axial)、矢状(Sagittal)和冠状(Coronal)三个解剖平面与体素坐标轴的对应关系，并提供在一维索引、三维体素坐标和二维平面像素坐标之间转换的方法。
+- **DicomPlane**:一个简单的枚举，定义了三种解剖平面类型以及常用的工具函数。
 
 ## 与其他模块的关系
 
@@ -25,7 +25,7 @@ Core 模块围绕几个关键类展开：
 
 ## 文档结构
 
-本目录下的文档按「原理说明」和「最小实现」分为两个模块：
+本目录下的文档按「原理说明」和「最小实现」分为两个模块:
 
 ### Explanations 设计原理与实现思路
 

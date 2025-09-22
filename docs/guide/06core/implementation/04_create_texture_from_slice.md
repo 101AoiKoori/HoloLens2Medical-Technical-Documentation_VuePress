@@ -4,7 +4,7 @@ title: 从切片创建纹理并显示
 
 # 从切片创建纹理并显示
 
-**目标：** 在 Unity 中解码 `DicomSlice` 的像素数据，应用窗位/窗宽映射生成 `Texture2D`，并将其显示在 UI 的 `RawImage` 上。此流程是构建自定义查看器或 MPR 界面的基础步骤。
+**目标:** 在 Unity 中解码 `DicomSlice` 的像素数据，应用窗位/窗宽映射生成 `Texture2D`，并将其显示在 UI 的 `RawImage` 上。此流程是构建自定义查看器或 MPR 界面的基础步骤。
 
 ## 前置条件
 
@@ -16,7 +16,7 @@ title: 从切片创建纹理并显示
 
 1. **解码像素数据**
 
-   在创建纹理前必须确保像素数据已从 DICOM 文件中提取。通过检查 `IsPixelDataDecoded` 属性判断是否已解码，如果未解码则调用 `DecodePixelData()`：
+   在创建纹理前必须确保像素数据已从 DICOM 文件中提取。通过检查 `IsPixelDataDecoded` 属性判断是否已解码，如果未解码则调用 `DecodePixelData()`:
 
    ```csharp
    if (!slice.IsPixelDataDecoded)
@@ -34,7 +34,7 @@ title: 从切片创建纹理并显示
 
 2. **创建纹理并调节窗位/窗宽**
 
-   调用 `CreateTexture()` 生成灰度纹理。你可以传入自定义窗位和窗宽，或留空使用默认值：
+   调用 `CreateTexture()` 生成灰度纹理。你可以传入自定义窗位和窗宽，或留空使用默认值:
 
    ```csharp
    // 使用默认窗位/窗宽
@@ -50,7 +50,7 @@ title: 从切片创建纹理并显示
 
 3. **显示纹理**
 
-   将生成的 `Texture2D` 赋值给 `RawImage` 的 `texture` 属性即可在界面上显示：
+   将生成的 `Texture2D` 赋值给 `RawImage` 的 `texture` 属性即可在界面上显示:
 
    ```csharp
    using UnityEngine.UI;
@@ -70,7 +70,7 @@ title: 从切片创建纹理并显示
 
 4. **释放纹理和像素资源**
 
-   当该切片不再需要显示时，应释放占用的 GPU 和内存资源：
+   当该切片不再需要显示时，应释放占用的 GPU 和内存资源:
 
    ```csharp
    slice.ReleaseTexture(); // 销毁缓存纹理，释放显存

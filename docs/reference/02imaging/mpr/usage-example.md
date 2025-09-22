@@ -4,7 +4,7 @@ title: 使用示例
 
 # 使用示例
 
-下面的示例演示如何使用 `MPRTextureManager` 在 Unity 场景中实现多平面重建：
+下面的示例演示如何使用 `MPRTextureManager` 在 Unity 场景中实现多平面重建:
 
 ```csharp
 // 挂载管理器
@@ -52,4 +52,4 @@ void OnSliderChanged(int axialIdx, int sagittalIdx, int coronalIdx) {
 }
 ```
 
-此流程展示了 MPR 模块的典型用法：绑定序列、设置索引和窗宽窗位、同步获取轴向纹理、异步请求其他平面，并在生成完成事件中更新 UI。
+此流程展示了 MPR 模块的典型用法:绑定序列、设置索引和窗宽窗位、同步获取轴向纹理、异步请求其他平面，并在生成完成事件中更新 UI。

@@ -16,7 +16,7 @@ title: 标记与状态管理
 
 `void MarkTextureAsVisible(PlaneType planeType, string cacheKey)`
 
-当纹理被真正显示在界面上时，应当调用此方法。它会：
+当纹理被真正显示在界面上时，应当调用此方法。它会:
 
 - 更新 `_currentDisplayedTextures` 中对应切面的键。
 - 增加引用计数，使其权重更高，减少被淘汰的机会。

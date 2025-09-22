@@ -8,7 +8,7 @@ title: 添加与获取纹理
 
 ## 添加纹理
 
-使用 `AddTextureToCache(PlaneType planeType, string cacheKey, Texture2D texture)` 可以将新生成的纹理加入缓存。在执行过程中，它会：
+使用 `AddTextureToCache(PlaneType planeType, string cacheKey, Texture2D texture)` 可以将新生成的纹理加入缓存。在执行过程中，它会:
 
 1. 判断是否已存在同名键，若存在则替换并正确处理旧纹理的销毁。
 2. 检查是否达到内存或数量上限，若超出则根据淘汰策略移除得分最低的纹理。
@@ -23,7 +23,7 @@ cache.AddTextureToCache(PlaneType.Axial, key, newTexture);
 
 ## 获取纹理
 
-`Texture2D GetTextureFromCache(PlaneType planeType, string cacheKey)` 用于读取缓存中的纹理：
+`Texture2D GetTextureFromCache(PlaneType planeType, string cacheKey)` 用于读取缓存中的纹理:
 
 - 如果缓存中存在且不为空，则更新 LRU 列表、使用计数和最后访问时间，并返回纹理。
 - 如果处于“选择锁”状态且不存在缓存，则尝试使用上一个有效纹理回退，避免界面出现黑屏。
