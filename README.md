@@ -1,8 +1,8 @@
 # HoloLens2Medical 技术文档
 
 本项目为 HoloLens2Medical 提供完整的技术文档，采用 VuePress 构建，涵盖 DICOM 医学影像处理、MRTK3 交互集成以及 Unity 开发的全套技术说明。
-![alt text](image.png)
-![alt text](image-1.png)
+* ![alt text](image-1.png)
+* ![alt text](image.png)
 ## 关于 HoloLens2Medical 项目
 
 HoloLens2Medical 是一个基于 Unity 和 MRTK3 的医学影像可视化解决方案，专为 HoloLens 2 设备设计。项目实现了以下核心功能:
