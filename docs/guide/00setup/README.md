@@ -101,7 +101,7 @@ Assets/StreamingAssets/
 * `HandMenuLarge` 预制件包含三个功能区域：
   - **左侧**：`MRTK3` 基础交互按钮（重置`STL`位置、标记模式、测距模式、清除标记）
   - **右侧**：`DICOM` 数据控制按钮（加载数据、重置视图、隐藏`3D`平面、关闭`STL`外框）  
-  - **中间**：`DICOM` 切片索引滑块和**窗位**、**窗宽**调节
+  - **中间**：`DICOM` 切片浏览滑块和**窗位**、**窗宽**调节
 ![HandMenuLarge](./imgs/HandMenuLarge.png)
 
 4. 放置好 `DICOM` 数据文件并完成如上配置后，就可以正常加载 `dicom` 数据了。
